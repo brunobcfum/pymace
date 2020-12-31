@@ -127,3 +127,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+#reports
+reports/
+node_dumps/
+message_dumps/
+neighbours/
+result*
+
+.vscode/

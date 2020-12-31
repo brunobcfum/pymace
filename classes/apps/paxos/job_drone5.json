@@ -1,0 +1,24 @@
+{
+    "jobs": [ 
+        {
+            "start": 25,
+            "type": "leader",
+            "value": ""
+        },
+        {
+            "start": 30,
+            "type": "propose",
+            "value": "0xBAD"
+        },
+        {
+            "start": 50,
+            "type": "propose",
+            "value": "0xC0DE"
+        },
+        {
+            "start": 70,
+            "type": "server",
+            "value": ""
+        }
+    ]
+}

@@ -1,0 +1,64 @@
+[
+    {
+        "board" : "stub",
+        "deepSleep_current" : 0.0,
+        "modemSleep_current" : 0.0,
+        "awake_current" : 0.0,
+        "tx_current" : 0.0,
+        "rx_current" : 0.0,
+        "sensor_energy" : 0.0,
+        "multiplier" : 1,
+        "comment" : "Everything in current is A and energy is J"
+    },
+    {
+        "board" : "esp8266",
+        "deepSleep_current" : 0.000010,
+        "modemSleep_current" : 0.0150,
+        "awake_current" : 0.0810,
+        "tx_current" : 0.170,
+        "rx_current" : 0.056,
+        "sensor_energy" : 0.000000887,
+        "multiplier" : 250,
+        "comment" : "Everything in current is A and energy is J"
+    },
+    {
+        "board" : "nrf52811",
+        "deepSleep_current" : 0.00000185,
+        "modemSleep_current" : 0.00000235,
+        "awake_current" : 0.0028,
+        "tx_energy" : 0.000888889,
+        "rx_energy" : 0.000434722,
+        "sensor_energy" : 0.0069,
+        "multiplier" : 250
+    },
+    {
+        "board" : "esp32",
+        "deepSleep_current" : 0.004166667,
+        "modemSleep_current" : 0.003000000,
+        "awake_current" : 0.00015556,
+        "tx_energy" : 0.023041,
+        "rx_energy" : 0.023041,
+        "sensor_energy" : 0.0069,
+        "multiplier" : 250
+    },
+    {
+        "board" : "telosb",
+        "deepSleep_current" : 0.004166667,
+        "modemSleep_current" : 0.003000000,
+        "awake_current" : 0.00015556,
+        "tx_energy" : 0.023041,
+        "rx_energy" : 0.023041,
+        "sensor_energy" : 0.0069,
+        "multiplier" : 250
+    },
+    {
+        "board" : "micaz",
+        "deepSleep_current" : 0.004166667,
+        "modemSleep_current" : 0.003000000,
+        "awake_current" : 0.00015556,
+        "tx_energy" : 0.023041,
+        "rx_energy" : 0.023041,
+        "sensor_energy" : 0.0069,
+        "multiplier" : 250
+    }
+]

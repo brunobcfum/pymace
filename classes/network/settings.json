@@ -1,0 +1,10 @@
+{
+    "networkPort" : 56123,
+    "helloInterval": 0.5,
+    "visibleTimeout": 20,
+    "ipv4bcast": "10.0.1.255",
+    "interface": "bat",
+    "dynamic" : "True",
+    "membership_len": 9,
+    "network": "10.0.1."
+}

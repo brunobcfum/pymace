@@ -1,0 +1,29 @@
+{
+    "jobs": [
+        {
+            "start": 10,
+            "type": "disable",
+            "value": ""
+        },
+        {
+            "start": 40,
+            "type": "enable",
+            "value": ""
+        },
+        {
+            "start": 45,
+            "type": "leader",
+            "value": ""
+        },
+        {
+            "start": 70,
+            "type": "propose",
+            "value": "0xC0C0A"
+        },
+        {
+            "start": 80,
+            "type": "propose",
+            "value": "0xD0E"
+        }
+    ]
+}

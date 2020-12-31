@@ -1,0 +1,6 @@
+{
+    "clientPort" : 56444,
+    "rsmPort" : 55333,
+    "maxPacket" : 65500,
+    "network": "10.0.1."
+}

@@ -1,0 +1,8 @@
+{
+    "controlPort" : 56555,
+    "clientPort" : 56444,
+    "maxUDPPacket" : 1500,
+    "network": "10.0.1.",
+    "proposalTimeout": 10000,
+    "quorumLen": 8
+}

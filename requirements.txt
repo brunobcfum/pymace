@@ -1,0 +1,4 @@
+flask
+apscheduler
+ping3
+opencv-python

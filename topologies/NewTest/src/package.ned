@@ -1,0 +1,3 @@
+package newtest;
+
+@license(LGPL);

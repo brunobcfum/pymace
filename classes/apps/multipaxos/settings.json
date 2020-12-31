@@ -1,0 +1,7 @@
+{
+    "controlPort" : 56555,
+    "maxPacket" : 65500,
+    "network": "10.0.1.",
+    "proposalTimeout": 10000,
+    "quorumLen": 8
+}

@@ -1,0 +1,6 @@
+{
+    "dataPort" : 56555,
+    "maxUDPPacket" : 1500,
+    "ipv4bcast": "10.0.1.255",
+    "proposalTimeout": 10000
+}

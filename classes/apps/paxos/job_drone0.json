@@ -1,0 +1,19 @@
+{
+    "jobs": [ 
+        {
+            "start": 15,
+            "type": "leader",
+            "value": ""
+        },
+        {
+            "start": 20,
+            "type": "propose",
+            "value": "0xBEEF"
+        },
+        {
+            "start": 40,
+            "type": "propose",
+            "value": "0xCAFE"
+        }
+    ]
+}

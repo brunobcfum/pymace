@@ -1,0 +1,8 @@
+{
+    "pickup" : 2000,
+    "timeout" : 3000,
+    "beacon_interval" : 1,
+    "port": 56911,
+    "echo_sample_size": 5,
+    "echo_threshold": 2
+}

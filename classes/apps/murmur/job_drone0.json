@@ -1,0 +1,18 @@
+{
+    "jobs": {
+        "oneshot" : [
+            {
+                "start": 10,
+                "type": "broadcast",
+                "value": "hello"
+            }
+        ],
+        "periodic": [
+            {
+                "interval": 20,
+                "type": "broadcast",
+                "value": "hello"
+            }
+        ]
+    }
+}
