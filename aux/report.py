@@ -161,7 +161,7 @@ class Report ():
 
 
 if __name__ == '__main__':  #for main run the main function. This is only run when this main python file is called, not when imported as a class
-    print("Reporter - Report generator for Genesis")
+    print("Reporter - Report generator for pymace")
     print()
     folders = []
     sorted_folders = []

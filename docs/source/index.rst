@@ -1,13 +1,13 @@
-.. genesis documentation master file, created by
+.. pymace documentation master file, created by
    sphinx-quickstart on Sun Dec 13 12:59:50 2020.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to genesis's documentation!
+Welcome to pymaces's documentation!
 ===================================
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 4
    :caption: Contents:
 
 
@@ -19,10 +19,12 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-genesis
+pymace
 ===================
-.. automodule:: genesis
+.. automodule:: pymace
    :members:
 
-.. autoclass:: Runner
+auxiliar
+===================
+.. automodule:: auxiliar
    :members:

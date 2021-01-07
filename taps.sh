@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "This script is part of the genesis project."
+echo "This script is part of the pymace project."
 echo "This script creates several Linux namespaces and TAP interfaces in them"
 echo ""
 

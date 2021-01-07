@@ -56,5 +56,20 @@
     "dump": "False",
     "topology": "symmetrical",
     "number_of_nodes": 9
+  },
+  "vm": {
+    "core": "True",
+    "disks": "True",
+    "dump": "False",
+    "topology": "symmetrical",
+    "number_of_nodes": 2
+  },
+  "docker": {
+    "core": "True",
+    "disks": "True",
+    "dump": "False",
+    "topology": "symmetrical",
+    "radius": 120,
+    "number_of_nodes": 2
   }
 }

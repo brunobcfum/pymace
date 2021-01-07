@@ -9,9 +9,9 @@ from pymobility.models.mobility import random_waypoint
 
 motes_global = []
 class Socket(flask.Flask):
-    def __init__(self, nodes, wlan, session, modelname, digest, semaphore, genesis):
+    def __init__(self, nodes, wlan, session, modelname, digest, semaphore, pymace):
         app = flask.Flask(__name__)
-        self.Genesis = genesis
+        self.Pymace = pymace
         self.socketio = SocketIO(app, cors_allowed_origins="*", engineio_logger=False, logger=False)
         log1 = logging.getLogger('werkzeug')
         log1.disabled = True
@@ -104,10 +104,10 @@ class Socket(flask.Flask):
 
     def emmit_digest(self):
         while self.lock:
-            if self.Genesis.iosocket_semaphore == True:
+            if self.Pymace.iosocket_semaphore == True:
                 print('IOSOCKET -> semaphore')
-                self.socketio.emit('digest', {'data': self.Genesis.nodes_digest}, namespace='/sim')
-                self.Genesis.iosocket_semaphore = False
+                self.socketio.emit('digest', {'data': self.Pymace.nodes_digest}, namespace='/sim')
+                self.Pymace.iosocket_semaphore = False
             time.sleep(0.5)
 
     def nodes_thread(self):

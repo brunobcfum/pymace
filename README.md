@@ -1,8 +1,25 @@
-# Node agent for testing Distributed Computing Algos
+# pymace - Python Mobile Ad-Hoc Computing Emulator
+This software is part of the paper:
 
-## Developed as part of a PhD thesis
+## Main usage
 
-### Usage:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Alternative Usage:
 
 ./main [node_name] [application [role] ] [time multiplier] [routing protocol] [initial battery level] [energy_model] [simulation max time]
 

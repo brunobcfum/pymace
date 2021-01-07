@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 """ 
-Main simulation runner is part of the Genesis project.
-This contains the main runner that will run in each node. This is called by the genesis main emulation script,
+Main simulation runner is part of the pymace project.
+This contains the main runner that will run in each node. This is called by the pymace main emulation script,
 but can be called manually when running on real hardware or when running manually for testing.
 """
 __author__ = "Bruno Chianca Ferreira"
@@ -122,12 +122,12 @@ def startup():
     """
     s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     try:
-        os.remove("/tmp/genesis.sock."+args.tag)
+        os.remove("/tmp/pymace.sock."+args.tag)
     except OSError:
         #traceback.print_exc()
         pass
     try:
-        s.bind("/tmp/genesis.sock."+args.tag)
+        s.bind("/tmp/pymace.sock."+args.tag)
         s.listen(10)
     except OSError:
         traceback.print_exc()
@@ -145,7 +145,7 @@ def startup():
 
 if __name__ == '__main__':  #for main run the main function. This is only run when this main python file is called, not when imported as a class
     try:
-        print("Genesis v." + __version__ + " - testing agent")
+        print("pymace v." + __version__ + " - testing agent")
 
         parser = argparse.ArgumentParser(description='Some arguments are obligatory and must follow the correct order as indicated')
 
@@ -165,13 +165,6 @@ if __name__ == '__main__':  #for main run the main function. This is only run wh
 
         args = parser.parse_args()
         #print(args)
-
-        energy_model_file = open("energy_models.json","r").read()
-        energy_model = json.loads(energy_model_file)
-        for board in energy_model:
-            if board['board'] == args.energy:
-                energy_model = board
-                break 
 
         Node = node.Node(args.tag, energy_model, args.application, args.role, args.time_scale, args.battery, args.ip.upper(), args.protocol, args.membership, args.fault_detector) #create node object
         prompt = prompt.Prompt(Node)
