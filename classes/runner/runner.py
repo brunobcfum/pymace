@@ -15,6 +15,8 @@ from core.emane.nodes import EmaneNet
 
 from core.nodes.docker import DockerNode
 
+from classes.mobility import mobility
+
 class Runner():
 
   def __init__(self, 
@@ -31,7 +33,8 @@ class Runner():
                start_delay,         # How long to wait starting application
                fault_detector,
                topology,
-               omnet_settings):
+               omnet_settings,
+               mobility):
     """
     Runner class
     """
@@ -52,17 +55,22 @@ class Runner():
     self.omnet_settings = omnet_settings
     self.nodes_digest = {}
     self.iosocket_semaphore = False
+    self.Mobility = mobility.Mobility(self, mobility)
 
   def core_topology(self):
     """
     Defines and instantiate a CORE emulation session
     """
     os.system("core-cleanup")
-    radius = 120
     self.nodes = []
+
+
     topology_file = open("./topologies/" + self.topology + ".json","r").read()
     topology = json.loads(topology_file)
     topo_from_file = []
+
+    radius, bandwidth, delay, jitter, error = self.load_core_settings()
+
     for node in topology:
       topo_from_file.append([int(node['x']), int(node['y'])])
       #print("x:" + str(int(node['x'])) + " y:" + str(int(node['y'])))
@@ -143,17 +151,30 @@ class Runner():
     self.session.mobility.set_model_config(self.wlan.id, BasicRangeModel.name,
         {
             "range": radius,
-            "bandwidth": "433300000",
-            "delay": "300",
-            "jitter": "0",
-            "error": "0",
+            "bandwidth": bandwidth,
+            "delay": delay,
+            "jitter": jitter,
+            "error": error,
         },
     )
 
     for node in self.nodes:
       interface = prefixes.create_iface(node)
       self.session.add_link(node.id, self.wlan.id, iface1_data=interface)
+
+    self.Mobility.register_core_nodes(self.nodes)
+    self.Mobility.start()
     self.session.instantiate()
+  
+  def load_core_settings(self):
+    core_settings_file = open("./emulation.json","r").read()
+    core_settings = json.loads(core_settings_file)
+    radius = core_settings['core_settings']['radius']
+    bandwidth = core_settings['core_settings']['bandwidth']
+    delay = core_settings['core_settings']['delay']
+    jitter = core_settings['core_settings']['jitter']
+    error = core_settings['core_settings']['error']
+    return radius, bandwidth, delay, jitter, error
 
   def server_thread(self):
     'Starts a thread with the Socket.io instance that will serve the HMI'
@@ -173,7 +194,7 @@ class Runner():
         if data[1] == 'POSITION':
           for node in self.nodes:
             if data[2][0] == node.id:
-              print(data[2])
+              #print(data[2])
               node.setposition(data[2][1], data[2][2])
         elif data[1] == 'LEADER':
           self.nodes_digest['leader'] = data[2]
@@ -349,6 +370,7 @@ class Runner():
   
   def createNodesCore(self):
     #creates a terminal window for each node running the main application
+    #TODO remove hard paths
     process = []
     for i in range(0,self.number_of_nodes):
       shell = self.session.get_node(i+1, CoreNode).termcmdstring(sh="/bin/bash")

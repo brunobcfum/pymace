@@ -13,6 +13,8 @@ from classes.runner.runner import Runner
 
 from core.nodes.base import CoreNode
 
+from classes.mobility import mobility
+
 class ETCDRunner(Runner):
 
   def __init__(self, 
@@ -22,7 +24,8 @@ class ETCDRunner(Runner):
                disks,               # Create virtual disks?
                dump,                # Use TCP Dump?
                topology,
-               omnet_settings):
+               omnet_settings,
+               mobility_model):
     self.number_of_nodes = number_of_nodes
     self.omnet = omnet
     self.core = core
@@ -32,6 +35,7 @@ class ETCDRunner(Runner):
     self.nodes_digest = {}
     self.topology = topology
     self.iosocket_semaphore = False
+    self.Mobility = mobility.Mobility(self, mobility_model)
 
   def start(self):
     self.run()

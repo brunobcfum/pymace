@@ -71,36 +71,36 @@ def _setup():
   repetitions - The number of repetitions of the emulation session
 
   """
-  simulation_file = open("./simulation.json","r").read()
-  simulations = json.loads(simulation_file)
-  for simulation in simulations['simulations']:
-    repetitions = simulation['repetitions']
-    scenario = simulation['scenario']
-    tagbase = simulation['settings']['tagbase']
-    application = simulation['settings']['application']
-    time_scale = simulation['settings']['timeScale']
-    time_limit = simulation['settings']['timeLimit']
-    number_of_nodes = simulation['settings']['number_of_nodes']
-    mobility = simulation['settings']['mobility']
-    fault_detector = simulation['settings']['fault_detector']
-    network = simulation['settings']['network']
-    membership = simulation['settings']['membership']
-    topology = simulation['settings']['topology']
-    ip = simulation['settings']['ip']
-    verboseLevel = simulation['settings']['verboseLevel']
-    battery = simulation['settings']['battery']
-    energy = simulation['settings']['energy']
-    role = simulation['settings']['role']
-    omnet = True if simulation['settings']['omnet'] == "True" else False
-    core = True if simulation['settings']['core'] == "True" else False
-    disks = True if simulation['settings']['disks'] == "True" else False
-    dump = True if simulation['settings']['dump'] == "True" else False
-    start_delay = simulation['settings']['start_delay']
+  emulation_file = open("./emulation.json","r").read()
+  emulations = json.loads(emulation_file)
+  for emulation in emulations['emulations']:
+    repetitions = emulation['repetitions']
+    scenario = emulation['scenario']
+    tagbase = emulation['settings']['tagbase']
+    application = emulation['settings']['application']
+    time_scale = emulation['settings']['timeScale']
+    time_limit = emulation['settings']['timeLimit']
+    number_of_nodes = emulation['settings']['number_of_nodes']
+    mobility = emulation['settings']['mobility']
+    fault_detector = emulation['settings']['fault_detector']
+    network = emulation['settings']['network']
+    membership = emulation['settings']['membership']
+    topology = emulation['settings']['topology']
+    ip = emulation['settings']['ip']
+    verboseLevel = emulation['settings']['verboseLevel']
+    battery = emulation['settings']['battery']
+    energy = emulation['settings']['energy']
+    role = emulation['settings']['role']
+    omnet = True if emulation['settings']['omnet'] == "True" else False
+    core = True if emulation['settings']['core'] == "True" else False
+    disks = True if emulation['settings']['disks'] == "True" else False
+    dump = True if emulation['settings']['dump'] == "True" else False
+    start_delay = emulation['settings']['start_delay']
 
-    omnet_settings = simulations['omnet_settings']
+    omnet_settings = emulations['omnet_settings']
 
     ### TODO: Move this to start
-    runner = Runner(application, network, membership, time_scale, time_limit, number_of_nodes, omnet, core, disks, dump, start_delay, fault_detector, topology, omnet_settings)
+    runner = Runner(application, network, membership, time_scale, time_limit, number_of_nodes, omnet, core, disks, dump, start_delay, fault_detector, topology, omnet_settings,mobility)
     return runner, repetitions
 
 def _setup_etcd():
@@ -115,17 +115,18 @@ def _setup_etcd():
   runner - The runner that will be used
 
   """
-  simulation_file = open("./simulation.json","r").read()
-  simulations = json.loads(simulation_file)
-  topology = simulation['etcd']['topology']
-  number_of_nodes = simulation['etcd']['number_of_nodes']
-  omnet = True if simulation['etcd']['omnet'] == "True" else False
-  core = True if simulation['etcd']['core'] == "True" else False
-  disks = True if simulation['etcd']['disks'] == "True" else False
-  dump = True if simulation['etcd']['dump'] == "True" else False
-  omnet_settings = simulations['omnet_settings']
+  emulation_file = open("./emulation.json","r").read()
+  emulation = json.loads(emulation_file)
+  topology = emulation['etcd']['topology']
+  number_of_nodes = emulation['etcd']['number_of_nodes']
+  omnet = True if emulation['etcd']['omnet'] == "True" else False
+  core = True if emulation['etcd']['core'] == "True" else False
+  disks = True if emulation['etcd']['disks'] == "True" else False
+  dump = True if emulation['etcd']['dump'] == "True" else False
+  omnet_settings = emulation['omnet_settings']
+  mobility = emulation['etcd']['mobility']
   ### TODO: Move this to start
-  runner = ETCDRunner(number_of_nodes, omnet, core, disks, dump, topology, omnet_settings)
+  runner = ETCDRunner(number_of_nodes, omnet, core, disks, dump, topology, omnet_settings,mobility)
   return runner
 
 def _setup_term():
@@ -141,17 +142,18 @@ def _setup_term():
 
 
   """
-  simulation_file = open("./simulation.json","r").read()
-  simulations = json.loads(simulation_file)
-  topology = simulation['term']['topology']
-  number_of_nodes = simulation['term']['number_of_nodes']
-  omnet = True if simulation['term']['omnet'] == "True" else False
-  core = True if simulation['term']['core'] == "True" else False
-  disks = True if simulation['term']['disks'] == "True" else False
-  dump = True if simulation['term']['dump'] == "True" else False
-  omnet_settings = simulations['omnet_settings']
+  emulation_file = open("./emulation.json","r").read()
+  emulation = json.loads(emulation_file)
+  topology = emulation['term']['topology']
+  number_of_nodes = emulation['term']['number_of_nodes']
+  omnet = True if emulation['term']['omnet'] == "True" else False
+  core = True if emulation['term']['core'] == "True" else False
+  disks = True if emulation['term']['disks'] == "True" else False
+  dump = True if emulation['term']['dump'] == "True" else False
+  omnet_settings = emulation['omnet_settings']
+  mobility = emulation['term']['mobility']
   ### TODO: Move this to start
-  runner = TERMRunner(number_of_nodes, omnet, core, disks, dump, topology, omnet_settings)
+  runner = TERMRunner(number_of_nodes, omnet, core, disks, dump, topology, omnet_settings,mobility)
   return runner
 
 def _setup_vm():
@@ -167,15 +169,16 @@ def _setup_vm():
 
 
   """
-  simulation_file = open("./simulation.json","r").read()
-  simulations = json.loads(simulation_file)
-  topology = simulation['vm']['topology']
-  number_of_nodes = simulation['vm']['number_of_nodes']
-  core = True if simulation['vm']['core'] == "True" else False
-  disks = True if simulation['vm']['disks'] == "True" else False
-  dump = True if simulation['vm']['dump'] == "True" else False
+  emulation_file = open("./emulation.json","r").read()
+  emulation = json.loads(emulation_file)
+  topology = emulation['vm']['topology']
+  number_of_nodes = emulation['vm']['number_of_nodes']
+  core = True if emulation['vm']['core'] == "True" else False
+  disks = True if emulation['vm']['disks'] == "True" else False
+  dump = True if emulation['vm']['dump'] == "True" else False
+  mobility = emulation['vm']['mobility']
   ### TODO: Move this to start
-  runner = VMRunner(number_of_nodes, core, disks, dump, topology)
+  runner = VMRunner(number_of_nodes, core, disks, dump, topology, mobility)
   return runner
 
 def _setup_docker():
@@ -191,15 +194,15 @@ def _setup_docker():
 
 
   """
-  simulation_file = open("./simulation.json","r").read()
-  simulations = json.loads(simulation_file)
-  topology = simulation['docker']['topology']
-  radius = simulation['docker']['radius']
-  number_of_nodes = simulation['docker']['number_of_nodes']
-  core = True if simulation['docker']['core'] == "True" else False
-  dump = True if simulation['docker']['dump'] == "True" else False
+  emulation_file = open("./emulation.json","r").read()
+  emulation = json.loads(emulation_file)
+  topology = emulation['docker']['topology']
+  number_of_nodes = emulation['docker']['number_of_nodes']
+  core = True if emulation['docker']['core'] == "True" else False
+  dump = True if emulation['docker']['dump'] == "True" else False
+  mobility = emulation['docker']['mobility']
   ### TODO: Move this to start
-  runner = DockerRunner(number_of_nodes, core, dump, topology, radius)
+  runner = DockerRunner(number_of_nodes, core, dump, topology, mobility)
   return runner
 
 def _start(runner, repetitions):
@@ -300,7 +303,7 @@ if __name__ == '__main__':
     print()
 
     parser = argparse.ArgumentParser(description='Some arguments are obligatory and must follow the correct order as indicated')
-    parser.add_argument("command", help="Main command to execute: run a configured simulation or create a new application.", choices=['run', 'new', 'clean', 'etcd', 'term', 'vm', 'docker'])
+    parser.add_argument("command", help="Main command to execute: run a configured emulation or create a new application.", choices=['run', 'new', 'clean', 'etcd', 'term', 'vm', 'docker'])
     parser.add_argument("name", help="New application name", nargs='?')
     parser.add_argument("-l", "--log", help="Log level", choices=['debug', 'info', 'warning', 'error', 'critical'],default="info")
     args = parser.parse_args()
@@ -316,9 +319,9 @@ if __name__ == '__main__':
       logging.error("This must be run as root or with sudo.")
       sys.exit(1)
 
-    simulation_file = open("simulation.json","r").read()
-    simulation = json.loads(simulation_file)
-    username = simulation['username']
+    emulation_file = open("emulation.json","r").read()
+    emulation = json.loads(emulation_file)
+    username = emulation['username']
 
     localdir = os.path.dirname(os.path.abspath(__file__))
     #############################################################################

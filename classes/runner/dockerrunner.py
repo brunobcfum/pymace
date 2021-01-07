@@ -22,6 +22,8 @@ from core.location.mobility import BasicRangeModel
 from core.emane.ieee80211abg import EmaneIeee80211abgModel
 from core.emane.nodes import EmaneNet
 
+from classes.mobility import mobility
+
 class DockerRunner(Runner):
   """
   A class for creating nodes running docker images
@@ -49,8 +51,8 @@ class DockerRunner(Runner):
                number_of_nodes,     # Total number of nodes
                core,                # Run CORE emulator?
                dump,                # Use TCP Dump?
-               topology,            # Topology chosen in configuration file
-               radius):             # Range radius of the wireless radio
+               topology,
+               mobility_model):            # Topology chosen in configuration file
     """
     Parameters
     ----------
@@ -62,8 +64,6 @@ class DockerRunner(Runner):
         The number of nodes to be considered
     topology: json object
         A JSON opbject containing the topology
-    radius: int
-        The range radius of the wireless radio
     nodes_digest: dictionary
         A dict that stores a digest about each node
     nodes: list
@@ -75,11 +75,21 @@ class DockerRunner(Runner):
     self.nodes_digest = {}
     self.topology = topology
     self.iosocket_semaphore = False
-    self.radius = radius
     self.nodes = []
+    self.Mobility = mobility.Mobility(self, mobility_model) 
 
   def start(self):
     self.run()
+
+  def load_core_settings(self):
+    core_settings_file = open("./emulation.json","r").read()
+    core_settings = json.loads(core_settings_file)
+    radius = core_settings['core_settings']['radius']
+    bandwidth = core_settings['core_settings']['bandwidth']
+    delay = core_settings['core_settings']['delay']
+    jitter = core_settings['core_settings']['jitter']
+    error = core_settings['core_settings']['error']
+    return radius, bandwidth, delay, jitter, error
 
   def run(self):
     os.system("core-cleanup")
@@ -90,6 +100,10 @@ class DockerRunner(Runner):
     topology_file = open("./topologies/" + self.topology + ".json","r").read()
     topology = json.loads(topology_file)
     topo = []
+
+    radius, bandwidth, delay, jitter, error = self.load_core_settings()
+
+
     for node in topology:
       topo.append([int(node['x']), int(node['y'])])
     #start dumps
@@ -122,11 +136,11 @@ class DockerRunner(Runner):
       self.modelname = BasicRangeModel.name
       self.session.mobility.set_model_config(self.wlan.id, BasicRangeModel.name,
           {
-              "range": self.radius,
-              "bandwidth": "433300000",
-              "delay": "300",
-              "jitter": "0",
-              "error": "0",
+              "range": radius,
+              "bandwidth": bandwidth,
+              "delay": delay,
+              "jitter": jitter,
+              "error": error,
           },
       )
 
@@ -135,6 +149,8 @@ class DockerRunner(Runner):
         self.session.add_link(node.id, self.wlan.id, iface1_data=interface)
 
       # instantiate
+      self.Mobility.register_core_nodes(self.nodes)
+      self.Mobility.start()
       self.session.instantiate()
 
       sthread = threading.Thread(target=self.server_thread, args=())

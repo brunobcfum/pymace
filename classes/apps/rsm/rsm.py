@@ -260,7 +260,7 @@ class App:
   def emmit_to_host(self, data):
     bus = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     bus.settimeout(1)
-    bus.connect("/tmp/genesis_main.sock")
+    bus.connect("/tmp/pymace_main.sock")
     payload = pickle.dumps(data)
     length = len(payload)
     bus.sendall(struct.pack('!I', length))

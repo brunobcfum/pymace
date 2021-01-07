@@ -11,6 +11,10 @@ __email__ = "brunobcf@gmail.com"
 import  traceback, os, logging, time, subprocess, threading
 from classes.runner.runner import Runner
 
+from core.nodes.base import CoreNode
+
+from classes.mobility import mobility
+
 class VMRunner(Runner):
 
   def __init__(self, 
@@ -18,7 +22,8 @@ class VMRunner(Runner):
                core,                # Run CORE emulator?
                disks,               # Create virtual disks?
                dump,                # Use TCP Dump?
-               topology):
+               topology,
+               mobility_model):
     self.number_of_nodes = number_of_nodes
     self.core = core
     self.disks = disks
@@ -26,6 +31,7 @@ class VMRunner(Runner):
     self.nodes_digest = {}
     self.topology = topology
     self.iosocket_semaphore = False
+    self.Mobility = mobility.Mobility(self, mobility_model)
 
   def start(self):
     self.run()

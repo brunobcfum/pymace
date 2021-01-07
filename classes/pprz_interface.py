@@ -11,9 +11,10 @@ from geopy.distance import geodesic
 class Interface():
     def __init__(self, Node):
         self.Node = Node
-        self.tag_number = int(self.Node.tag[5:])
+        #self.tag_number = int(self.Node.tag[5:])
         self.home = [43.564188, 1.480981]
         self.scale = 2
+        self.callbacks = []
         self.udp = pprzlink.udp.UdpMessagesInterface(
                 self.packet_handler,            # Callback function
                 uplink_port = 4212,      # Port we send messages to 
@@ -22,16 +23,14 @@ class Interface():
                 verbose=False,
                 msg_class='telemetry'
                 )
-        #self.udp.start()
 
         self.udp_sender = pprzlink.udp.UdpMessagesInterface(
                         self.packet_handler,          # Callback function
                         uplink_port = 56042,  # Port we send messages to 
                         downlink_port = 4212,  # Port used to receive messages
-                        interface_id = 32, # Numerical id of the interface (ac_id)
+                        interface_id = 31, # Numerical id of the interface (ac_id)
                         msg_class='telemetry'
                         )
-        #self.udp_sender.start()
 
     def start(self):
         self.udp.start()
@@ -41,6 +40,9 @@ class Interface():
         self.udp_sender.shutdown()
         self.udp.shutdown()
 
+    def register_callback(self, callback):
+        self.callbacks.append(callback)
+
     def packet_handler(self, sender,address,msg,length,receiver_id=None, component_id=None):
         if msg.name == "GPS_INT":
             #print(str(sender) + "->GPS lat:" + str(msg.get_field(3) / 10000000) + " long: " + str(msg.get_field(4) / 10000000))
@@ -48,7 +50,13 @@ class Interface():
             x = geodesic((self.home[0], self.home[1]), (self.home[0], msg.get_field(4)/ 10000000)).meters * self.scale
             #x = 500 * (180 + (msg.get_field(3) / 10000000)) / 360
             #y = 500 * (90 - (msg.get_field(4) / 10000000)) / 180
-            self.Node.Bus.emmit(['MOB', 'POSITION', [self.tag_number, x, y]])
+            for cb in self.callbacks:
+                cb([receiver_id, x, y])
+            try:
+                self.Node.Bus.emmit(['MOB', 'POSITION', [self.tag_number, x, y]])
+            except:
+                #Only works when called from a crafted node
+                pass
             #print("X:" + str(x) + " Y:" + str(y))
         else:
             pass
@@ -62,5 +70,5 @@ class Interface():
                 0  # The id of the destination  
             )
         except:
-            pass
+            traceback.print_exc()
             #print("Failed to send message from %i %s [%d Bytes]: %s" % (sender, address, length, msg)) 
