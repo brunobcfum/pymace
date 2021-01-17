@@ -13,7 +13,7 @@ from core.nodes.network import WlanNode
 from core.emane.ieee80211abg import EmaneIeee80211abgModel
 from core.emane.nodes import EmaneNet
 
-from core.nodes.docker import DockerNode
+from core.nodes.physical import Rj45Node
 
 from classes.mobility import mobility
 
@@ -135,11 +135,12 @@ class Runner():
 
     for node_opt in node_options:
       self.nodes.append(self.session.add_node(CoreNode, options=node_opt))
-    
-    options = NodeOptions(x=200, y=200)
+
+    options = NodeOptions(name='wlan', x=200, y=200)
     #options = NodeOptions(x=200, y=200, emane=EmaneIeee80211abgModel.name)
     #wlan = session.add_node(EmaneNet, options=options)
     self.wlan = self.session.add_node(WlanNode,options=options )
+
     #wlan = session.add_node(_type=NodeTypes.WIRELESS_LAN)
     # configure general emane settings
     #config = session.emane.get_configs()
@@ -157,10 +158,14 @@ class Runner():
             "error": error,
         },
     )
-
+    
     for node in self.nodes:
       interface = prefixes.create_iface(node)
       self.session.add_link(node.id, self.wlan.id, iface1_data=interface)
+
+    #rj45 = self.session.add_node(Rj45Node, options=NodeOptions(name='enp8s0',x=150, y=40))
+    #interface = prefixes.create_iface(node=rj45, name='enp8s0')
+    #self.session.add_link(rj45.id, self.wlan.id, iface1_data=interface)
 
     self.Mobility.register_core_nodes(self.nodes)
     self.Mobility.start()

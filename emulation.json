@@ -55,9 +55,9 @@
     "core": "True",
     "disks": "True",
     "dump": "False",
-    "topology": "symmetrical",
-    "mobility": "paparazzi",
-    "number_of_nodes": 9
+    "topology": "test2",
+    "mobility": "none",
+    "number_of_nodes": 6
   },
   "vm": {
     "core": "True",
