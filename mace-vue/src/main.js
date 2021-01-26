@@ -3,7 +3,8 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify'
 import store from './store'
 import router from './router'
-import VueSocketIO from 'vue-socket.io'
+import VueSocketIOExt from 'vue-socket.io-extended'
+import io from 'socket.io-client'
 import VueKonva from 'vue-konva'
 
 import L from 'leaflet';
@@ -19,10 +20,9 @@ Vue.config.productionTip = false
 
 Vue.use(VueKonva)
 
-Vue.use(new VueSocketIO({
-  debug: false,
-  connection: 'http://127.0.0.1:5000/sim'
-}))
+
+const socket = io('http://localhost:5000/sim');
+Vue.use(VueSocketIOExt, socket);
 
 new Vue({
   vuetify,
