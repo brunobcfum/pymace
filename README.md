@@ -5,7 +5,7 @@ This software is part of the paper: MACE: Mobile Ad-Hoc Computing Emulator
 
 ### Network emulators
 
-* CORE *
+*CORE*
 
 CORE can be downloaded here: https://github.com/coreemu/core/releases
 This was tested with release 7.2.1 and instructions on how to install can be found here: https://coreemu.github.io/core/install.html
@@ -13,7 +13,7 @@ This was tested with release 7.2.1 and instructions on how to install can be fou
 Core can be installed using virtual environments, but this work was created considering CORE was installed locally using:
 ./install.sh -l
 
-* OMNet++ *
+*OMNet++*
 
 OMNet++ Installation guide can be found here:
 https://omnetpp.org/doc/omnetpp/InstallGuide.pdf
