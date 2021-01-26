@@ -134,5 +134,6 @@ node_dumps/
 message_dumps/
 neighbours/
 result*
+trash/
 
 .vscode/
