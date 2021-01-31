@@ -132,6 +132,6 @@ class Socket(flask.Flask):
             data['wlan']['jitter'] = self.session.mobility.get_model_config(self.wlan.id, self.modelname)['jitter']
             data['wlan']['delay'] = self.session.mobility.get_model_config(self.wlan.id, self.modelname)['delay']
             data['wlan']['error'] = self.session.mobility.get_model_config(self.wlan.id, self.modelname)['error']
-            time.sleep(0.4)
+            time.sleep(0.04)
             self.socketio.emit('nodes', {'data': data}, namespace='/sim')
 

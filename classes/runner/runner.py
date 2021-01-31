@@ -19,43 +19,39 @@ from classes.mobility import mobility
 
 class Runner():
 
-  def __init__(self, 
-               application,         # Which application will run
-               network,             # Which transport to use
-               membership,          # Which membership algorithm
-               time_scale,          # Changes time scale to make application run faster
-               time_limit,          # Simulation limit
-               number_of_nodes,     # Total number of nodes
-               omnet,               # Run omnet simulator?
-               core,                # Run CORE emulator?
-               disks,               # Create virtual disks?
-               dump,                # Use TCP Dump?
-               start_delay,         # How long to wait starting application
-               fault_detector,
-               topology,
-               omnet_settings,
-               mobility):
+  def __init__(self, emulation):
     """
     Runner class
     """
-    self.application = application
-    self.network = network
-    self.membership = membership
-    self.topology = topology
-    self.fault_detector = fault_detector
-    self.time_scale = time_scale
-    self.time_limit = time_limit
-    self.number_of_nodes = number_of_nodes
-    self.nodes_to_start = list(range(self.number_of_nodes))
-    self.omnet = omnet
-    self.core = core
-    self.disks = disks
-    self.dump = dump
-    self.start_delay = start_delay
-    self.omnet_settings = omnet_settings
+    self.setup(emulation)
     self.nodes_digest = {}
     self.iosocket_semaphore = False
-    self.Mobility = mobility.Mobility(self, mobility)
+
+  def setup(self, emulation):
+    self.scenario = emulation['scenario']
+    self.tagbase = emulation['settings']['tagbase']
+    self.application = emulation['settings']['application']
+    self.time_scale = emulation['settings']['timeScale']
+    self.time_limit = emulation['settings']['timeLimit']
+    self.number_of_nodes = emulation['settings']['number_of_nodes']
+    self.mobility_model = emulation['settings']['mobility']
+    self.fault_detector = emulation['settings']['fault_detector']
+    self.network = emulation['settings']['network']
+    self.membership = emulation['settings']['membership']
+    self.topology = emulation['settings']['topology']
+    self.ip = emulation['settings']['ip']
+    self.verboseLevel = emulation['settings']['verboseLevel']
+    self.battery = emulation['settings']['battery']
+    self.energy = emulation['settings']['energy']
+    self.role = emulation['settings']['role']
+    self.omnet = True if emulation['settings']['omnet'] == "True" else False
+    self.core = True if emulation['settings']['core'] == "True" else False
+    self.disks = True if emulation['settings']['disks'] == "True" else False
+    self.dump = True if emulation['settings']['dump'] == "True" else False
+    self.start_delay = emulation['settings']['start_delay']
+    self.omnet_settings = emulations['omnet_settings']
+    self.Mobility = mobility.Mobility(self, self.mobility_model)
+    self.nodes_to_start = list(range(self.number_of_nodes))
 
   def core_topology(self):
     """

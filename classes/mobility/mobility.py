@@ -12,7 +12,11 @@ class Mobility():
     self.mobility_model = model
     self.core_nodes = []
     self.scheduler = BackgroundScheduler()
-    self.scheduler.add_job(self.mobility_update, 'interval', seconds=0.1, id='update')
+    self.scheduler.add_job(self.mobility_update, 'interval', seconds=0.2, id='update')
+    self.x_dim = 220
+    self.y_dim = 220
+    self.velocity_lower = 0.1
+    self.velocity_upper = 3
 
   def register_core_nodes(self, nodes):
     self.core_nodes = nodes
@@ -20,7 +24,28 @@ class Mobility():
 
   def configure_mobility(self):
     if self.mobility_model.upper() == 'RANDOM_WAYPOINT':
-      self.mobility_object = random_waypoint(len(self.core_nodes), dimensions=(220, 220), velocity=(0.5, 2.0), wt_max=1.0)
+      self.mobility_object = random_waypoint(len(self.core_nodes), dimensions=(self.x_dim , self.y_dim ), velocity=(self.velocity_lower, self.velocity_upper), wt_max=1.0)
+      self.scheduler.start()
+    elif self.mobility_model.upper() == 'RANDOM_WALK':
+      self.mobility_object = random_walk(len(self.core_nodes), dimensions=(self.x_dim , self.y_dim ), velocity=self.velocity_upper, distance=self.velocity_upper)
+      self.scheduler.start()
+    elif self.mobility_model.upper() == 'TRUNCATED_LEVY':
+      self.mobility_object = truncated_levy_walk(len(self.core_nodes), dimensions=(self.x_dim , self.y_dim ))
+      self.scheduler.start()
+    elif self.mobility_model.upper() == 'HETEROGENEOUS_TRUNCATED_LEVY':
+      self.mobility_object = heterogeneous_truncated_levy_walk(len(self.core_nodes), dimensions=(self.x_dim , self.y_dim ))
+      self.scheduler.start()
+    elif self.mobility_model.upper() == 'GAUSS_MARKOV':
+      self.mobility_object = gauss_markov(len(self.core_nodes), dimensions=(self.x_dim , self.y_dim ))
+      self.scheduler.start()
+    elif self.mobility_model.upper() == 'RANDOM_DIRECTION':
+      self.mobility_object = random_direction(len(self.core_nodes), dimensions=(self.x_dim , self.y_dim ), velocity=(self.velocity_lower, self.velocity_upper), wt_max=1.0)
+      self.scheduler.start()
+    elif self.mobility_model.upper() == 'REFERENCE_POINT_GROUP':
+      self.mobility_object = reference_point_group(len(self.core_nodes), dimensions=(self.x_dim , self.y_dim ), velocity=(self.velocity_lower, self.velocity_upper))
+      self.scheduler.start()
+    elif self.mobility_model.upper() == 'TVC':
+      self.mobility_object = tvc(len(self.core_nodes), dimensions=(self.x_dim , self.y_dim ), velocity=(self.velocity_lower, self.velocity_upper))
       self.scheduler.start()
     elif self.mobility_model.upper() == 'PAPARAZZI':
       self.PprzInterface = pprz_interface.Interface(None)
@@ -37,7 +62,7 @@ class Mobility():
   def paparazzi_mobility_update(self, data):
     for node in self.core_nodes:
       if data[0]+1 == node.id:
-        print("=====================================MOBILITY==========================================")
+       #print("=====================================MOBILITY==========================================")
         node.setposition(data[1], data[2])
 
   def start(self):

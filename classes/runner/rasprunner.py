@@ -15,7 +15,7 @@ from core.nodes.base import CoreNode
 
 from classes.mobility import mobility
 
-class VMRunner(Runner):
+class RaspRunner(Runner):
 
   def __init__(self, emulation):
     self.setup(emulation)
@@ -23,12 +23,17 @@ class VMRunner(Runner):
     self.iosocket_semaphore = False
 
   def setup(self, emulation):
-    self.topology = emulation['vm']['topology']
-    self.number_of_nodes = emulation['vm']['number_of_nodes']
-    self.core = True if emulation['vm']['core'] == "True" else False
-    self.disks = True if emulation['vm']['disks'] == "True" else False
-    self.dump = True if emulation['vm']['dump'] == "True" else False
-    self.mobility_model = emulation['vm']['mobility']
+    self.topology = emulation['rasp']['topology']
+    self.number_of_nodes = emulation['rasp']['number_of_nodes']
+    self.core = True if emulation['rasp']['core'] == "True" else False
+    self.disks = True if emulation['rasp']['disks'] == "True" else False
+    self.dump = True if emulation['rasp']['dump'] == "True" else False
+    self.mobility_model = emulation['rasp']['mobility']
+    self.kernel = emulation['rasp']['kernel']
+    self.image = emulation['rasp']['image_sufix']
+    self.dtb = emulation['rasp']['dtb']
+    self.mac_sufix = emulation['rasp']['mac_sufix']
+    self.tap_interface = emulation['rasp']['tap_interface']
     self.Mobility = mobility.Mobility(self, self.mobility_model)
 
   def start(self):
@@ -59,6 +64,7 @@ class VMRunner(Runner):
       sthread = threading.Thread(target=self.server_thread, args=())
       sthread.start()
 
+    time.sleep(0.5)
     self.configure_bridge()
     qemu_nodes = self.spawnQEMU(self.session, self.number_of_nodes)
 
@@ -94,12 +100,16 @@ class VMRunner(Runner):
     nodes = {}
     for i in range(0,number_of_nodes):
       shell = session.get_node(i+1, CoreNode).termcmdstring(sh="/bin/bash")
-      command = "qemu-system-x86_64"
-      command += " -m 2048" 
-      command += " -boot d -enable-kvm -smp 3"
-      command += " -hda /opt/vms/linux_x86_" + str(i+1) + ".img"
-      command += " -device e1000,netdev=mynet1,mac=DE:AD:BE:EF:00:0" + str(i+1)
-      command += " -netdev tap,id=mynet1,ifname=tap0,script=no" 
+      command = "qemu-system-arm"
+      command += " -kernel " + self.kernel
+      command += " -dtb " + self.dtb
+      command += " -m 256 -M versatilepb -cpu arm1176"  # Has to be hardcoded for now since only compatible known
+      command += " -serial stdio"
+      command += " -append \"rw console=ttyAMA0 root=PARTUUID=4d3ee428-02 rootfstype=ext4  loglevel=8 rootwait fsck.repair=yes memtest=1\""
+      command += " -drive file=" + self.image + str(i) + ".img,format=raw"
+      command += " -no-reboot"
+      command += " -net nic,macaddr=" + self.mac_sufix + str('{0:0{1}X}'.format(i,2))# + " -net user"
+      command += " -net tap,ifname=" + self.tap_interface + ",script=no,downscript=no"
       shell += " -c '" + command + "'"
       node = subprocess.Popen([
                       "xterm",

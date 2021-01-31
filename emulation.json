@@ -55,9 +55,9 @@
     "core": "True",
     "disks": "True",
     "dump": "False",
-    "topology": "test2",
+    "topology": "symmetrical",
     "mobility": "none",
-    "number_of_nodes": 6
+    "number_of_nodes": 9
   },
   "vm": {
     "core": "True",
@@ -73,6 +73,33 @@
     "dump": "False",
     "topology": "symmetrical",
     "mobility": "paparazzi",
-    "number_of_nodes": 2
+    "number_of_nodes": 2,
+    "image": "ubuntu"
+  },
+  "rasp": {
+    "core": "True",
+    "disks": "True",
+    "dump": "False",
+    "topology": "symmetrical",
+    "mobility": "none",
+    "number_of_nodes": 2,
+    "kernel": "/opt/rasp/kernel/kernel-qemu-4.14.50-stretch",
+    "dtb": "/opt/rasp/kernel/versatile-pb.dtb",
+    "image_sufix": "/opt/rasp/image/raspbian",
+    "mac_sufix": "52:55:0a:CA:FE:",
+    "tap_interface": "tap0"
+  },
+  "arm": {
+    "core": "True",
+    "disks": "True",
+    "dump": "False",
+    "topology": "symmetrical",
+    "mobility": "none",
+    "number_of_nodes": 2,
+    "kernel": "/opt/armvm/kernel/vmlinuz-4.14.0-3-arm64",
+    "initrd": "/opt/armvm/kernel/initrd.img-4.14.0-3-arm64",
+    "image_sufix": "/opt/armvm/image/node",
+    "mac_sufix": "52:55:00:be:ef:",
+    "tap_interface": "tap0"
   }
 }

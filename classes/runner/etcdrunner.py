@@ -17,25 +17,21 @@ from classes.mobility import mobility
 
 class ETCDRunner(Runner):
 
-  def __init__(self, 
-               number_of_nodes,     # Total number of nodes
-               omnet,               # Run omnet simulator?
-               core,                # Run CORE emulator?
-               disks,               # Create virtual disks?
-               dump,                # Use TCP Dump?
-               topology,
-               omnet_settings,
-               mobility_model):
-    self.number_of_nodes = number_of_nodes
-    self.omnet = omnet
-    self.core = core
-    self.disks = disks
-    self.dump = dump
-    self.omnet_settings = omnet_settings
+  def __init__(self, emulation):
+    self.setup(emulation)
     self.nodes_digest = {}
-    self.topology = topology
     self.iosocket_semaphore = False
-    self.Mobility = mobility.Mobility(self, mobility_model)
+    
+  def setup(self,emulation):
+    self.topology = emulation['etcd']['topology']
+    self.number_of_nodes = emulation['etcd']['number_of_nodes']
+    self.omnet = True if emulation['etcd']['omnet'] == "True" else False
+    self.core = True if emulation['etcd']['core'] == "True" else False
+    self.disks = True if emulation['etcd']['disks'] == "True" else False
+    self.dump = True if emulation['etcd']['dump'] == "True" else False
+    self.omnet_settings = emulation['omnet_settings']
+    self.mobility_model = emulation['etcd']['mobility']
+    self.Mobility = mobility.Mobility(self, self.mobility_model)
 
   def start(self):
     self.run()

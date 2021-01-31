@@ -15,7 +15,7 @@ from core.nodes.base import CoreNode
 
 from classes.mobility import mobility
 
-class VMRunner(Runner):
+class ARMRunner(Runner):
 
   def __init__(self, emulation):
     self.setup(emulation)
@@ -23,12 +23,17 @@ class VMRunner(Runner):
     self.iosocket_semaphore = False
 
   def setup(self, emulation):
-    self.topology = emulation['vm']['topology']
-    self.number_of_nodes = emulation['vm']['number_of_nodes']
-    self.core = True if emulation['vm']['core'] == "True" else False
-    self.disks = True if emulation['vm']['disks'] == "True" else False
-    self.dump = True if emulation['vm']['dump'] == "True" else False
-    self.mobility_model = emulation['vm']['mobility']
+    self.topology = emulation['arm']['topology']
+    self.number_of_nodes = emulation['arm']['number_of_nodes']
+    self.core = True if emulation['arm']['core'] == "True" else False
+    self.disks = True if emulation['arm']['disks'] == "True" else False
+    self.dump = True if emulation['arm']['dump'] == "True" else False
+    self.mobility_model = emulation['arm']['mobility']
+    self.kernel = emulation['arm']['kernel']
+    self.image = emulation['arm']['image_sufix']
+    self.initrd = emulation['arm']['initrd']
+    self.mac_sufix = emulation['arm']['mac_sufix']
+    self.tap_interface = emulation['arm']['tap_interface']
     self.Mobility = mobility.Mobility(self, self.mobility_model)
 
   def start(self):
@@ -94,12 +99,17 @@ class VMRunner(Runner):
     nodes = {}
     for i in range(0,number_of_nodes):
       shell = session.get_node(i+1, CoreNode).termcmdstring(sh="/bin/bash")
-      command = "qemu-system-x86_64"
-      command += " -m 2048" 
-      command += " -boot d -enable-kvm -smp 3"
-      command += " -hda /opt/vms/linux_x86_" + str(i+1) + ".img"
-      command += " -device e1000,netdev=mynet1,mac=DE:AD:BE:EF:00:0" + str(i+1)
-      command += " -netdev tap,id=mynet1,ifname=tap0,script=no" 
+      command = "qemu-system-aarch64"
+      command += " -kernel " + self.kernel
+      command += " -initrd " + self.initrd
+      command += " -m 1024 -M virt -cpu cortex-a53"
+      command += " -serial mon:stdio"
+      command += " -append \"rw root=/dev/vda1 console=ttyAMA0 loglevel=8 rootwait fsck.repair=yes memtest=1\""
+      command += " -drive file=" + self.image + str(i) + ".img,format=raw,if=sd,id=hd-root"
+      command += " -device virtio-blk-device,drive=hd-root"
+      command += " -net nic,macaddr=" + self.mac_sufix + str('{0:0{1}X}'.format(i,2))# + " -net user"
+      command += " -net tap,ifname=" + self.tap_interface + ",script=no,downscript=no"
+      command += " -no-reboot"
       shell += " -c '" + command + "'"
       node = subprocess.Popen([
                       "xterm",

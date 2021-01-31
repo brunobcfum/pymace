@@ -47,36 +47,25 @@ class DockerRunner(Runner):
   check_finished()
       check if all nodes finished the sessionS
   """
-  def __init__(self, 
-               number_of_nodes,     # Total number of nodes
-               core,                # Run CORE emulator?
-               dump,                # Use TCP Dump?
-               topology,
-               mobility_model):            # Topology chosen in configuration file
+  def __init__(self, emulation):            # Topology chosen in configuration file
     """
     Parameters
     ----------
-    core : Boolean
-        Using core as emulator?
-    dump : Boolean
-        Create network dump with tcpdump?
-    number_of_nodes : int
-        The number of nodes to be considered
-    topology: json object
-        A JSON opbject containing the topology
-    nodes_digest: dictionary
-        A dict that stores a digest about each node
-    nodes: list
-        A list that stores all nodes objects
+    emulation : Dictionary
+        emulation settings
     """
-    self.number_of_nodes = number_of_nodes
-    self.core = core
-    self.dump = dump
+    self.setup(emulation)
     self.nodes_digest = {}
-    self.topology = topology
     self.iosocket_semaphore = False
     self.nodes = []
-    self.Mobility = mobility.Mobility(self, mobility_model) 
+
+  def setup(self, emulation):
+    self.topology = emulation['docker']['topology']
+    self.number_of_nodes = emulation['docker']['number_of_nodes']
+    self.core = True if emulation['docker']['core'] == "True" else False
+    self.dump = True if emulation['docker']['dump'] == "True" else False
+    self.mobility_model = emulation['docker']['mobility']
+    self.Mobility = mobility.Mobility(self, self.mobility_model)
 
   def start(self):
     self.run()
