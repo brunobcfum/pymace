@@ -11,11 +11,14 @@ from core.nodes.base import CoreNode
 from core.nodes.network import WlanNode
 
 from core.emane.ieee80211abg import EmaneIeee80211abgModel
+from core.emane.rfpipe import EmaneRfPipeModel
+from core.emane.tdma import EmaneTdmaModel
 from core.emane.nodes import EmaneNet
 
-from core.nodes.physical import Rj45Node
-
 from classes.mobility import mobility
+from classes.runner.bus import Bus
+
+import pprint
 
 class Runner():
 
@@ -49,7 +52,7 @@ class Runner():
     self.disks = True if emulation['settings']['disks'] == "True" else False
     self.dump = True if emulation['settings']['dump'] == "True" else False
     self.start_delay = emulation['settings']['start_delay']
-    self.omnet_settings = emulations['omnet_settings']
+    self.omnet_settings = emulation['omnet_settings']
     self.Mobility = mobility.Mobility(self, self.mobility_model)
     self.nodes_to_start = list(range(self.number_of_nodes))
 
@@ -57,16 +60,20 @@ class Runner():
     """
     Defines and instantiate a CORE emulation session
     """
+
+    #clean any previous session
     os.system("core-cleanup")
     self.nodes = []
 
-
+    #open topology file
     topology_file = open("./topologies/" + self.topology + ".json","r").read()
     topology = json.loads(topology_file)
     topo_from_file = []
 
-    radius, bandwidth, delay, jitter, error = self.load_core_settings()
+    #get settings from main config file
+    radius, bandwidth, delay, jitter, error, emane = self.load_core_settings()
 
+    #read nodes from topology
     for node in topology:
       topo_from_file.append([int(node['x']), int(node['y'])])
       #print("x:" + str(int(node['x'])) + " y:" + str(int(node['y'])))
@@ -78,90 +85,67 @@ class Runner():
     self.session = self.coreemu.create_session()
 
     # location information is required to be set for emane
-    #self.session.location.setrefgeo(47.57917, -122.13232, 2.0)
-    #self.session.location.refscale = 150.0
+    if emane:
+      self.session.location.setrefgeo(47.57917, -122.13232, 2.0)
+      self.session.location.refscale = 150.0
 
     # must be in configuration state for nodes to start, when using "node_add" below
     self.session.set_state(EventTypes.CONFIGURATION_STATE)
-    # create wlan network node
 
     node_options=[]
     for i in range(0,self.number_of_nodes):
         node_options.append(NodeOptions(name='drone'+str(i)))
-    symm = [[150,50 ],
-            [250,50 ],
-            [150,150],
-            [250,150],
-            [350,250],
-            [250,250],
-            [350,50 ],
-            [150,250],
-            [350,150],
-            [652,300],
-            [451,302],
-            [726,400],
-            [651,464],
-            [729,466],
-            [651,126],
-            [728,124],
-            [729,198],
-            [451,128],
-            [376,129],
-            [377,200],
-            [371,401],
-            [452,472],
-            [371,473],
-            [551,200],
-            [550,400],
-            [804,501],
-            [802,98 ],
-            [302,100],
-            [302,502]]
 
-    star = [[417,218], #node0
-            [307,258], #node1
-            [514,283], #node2
-            [338,131], #node3
-            [496,129], #node4
-            [403,333]] #node5
-      
+    #nodes' position based on topology file
     topo = topo_from_file
     for i in range(0,self.number_of_nodes):
       node_options[i].set_position(topo[i][0],topo[i][1])
 
+    #add nodes to CORE's session
     for node_opt in node_options:
       self.nodes.append(self.session.add_node(CoreNode, options=node_opt))
 
-    options = NodeOptions(name='wlan', x=200, y=200)
-    #options = NodeOptions(x=200, y=200, emane=EmaneIeee80211abgModel.name)
-    #wlan = session.add_node(EmaneNet, options=options)
-    self.wlan = self.session.add_node(WlanNode,options=options )
-
     #wlan = session.add_node(_type=NodeTypes.WIRELESS_LAN)
     # configure general emane settings
-    #config = session.emane.get_configs()
-    #config.update({"eventservicettl": "2"})
-    # configure emane model settings
-    # using a dict mapping currently support values as strings
-    #session.emane.set_model_config(wlan.id, EmaneIeee80211abgModel.name, {"unicastrate": "3"})
-    self.modelname = BasicRangeModel.name
-    self.session.mobility.set_model_config(self.wlan.id, BasicRangeModel.name,
-        {
-            "range": radius,
-            "bandwidth": bandwidth,
-            "delay": delay,
-            "jitter": jitter,
-            "error": error,
-        },
-    )
+    if emane:
+      options = NodeOptions(x=200, y=200, emane=EmaneRfPipeModel.name)
+      self.wlan = self.session.add_node(EmaneNet, options=options)
+      self.modelname = EmaneRfPipeModel.name
+      config = self.session.emane.get_configs()
+      #config = self.session.emane.get_all_configs()
+      config.update({"eventservicettl": "2"})
+      wifi_options = {
+        "unicastrate": "3",
+        "bandwidth": "54000000",
+        "fading.model":"nakagami",
+        "distance":"120",
+        "datarate": "54000000",
+      }
+      self.session.emane.set_model_config(self.wlan.id, EmaneRfPipeModel.name, wifi_options)
+      config = self.session.emane.get_model_config(self.wlan.id, EmaneRfPipeModel.name)
+      pp = pprint.PrettyPrinter(indent=4)
+      pp.pprint (config)
+      #sys.exit(1)
+
+    #using basic range model
+    if not emane:
+      # create wlan network node
+      options = NodeOptions(name='wlan', x=200, y=200)
+      self.wlan = self.session.add_node(WlanNode,options=options )
+      self.modelname = BasicRangeModel.name
+      self.session.mobility.set_model_config(self.wlan.id, BasicRangeModel.name,
+          {
+              "range": radius,
+              "bandwidth": bandwidth,
+              "delay": delay,
+              "jitter": jitter,
+              "error": error,
+          },
+      )
     
     for node in self.nodes:
       interface = prefixes.create_iface(node)
       self.session.add_link(node.id, self.wlan.id, iface1_data=interface)
-
-    #rj45 = self.session.add_node(Rj45Node, options=NodeOptions(name='enp8s0',x=150, y=40))
-    #interface = prefixes.create_iface(node=rj45, name='enp8s0')
-    #self.session.add_link(rj45.id, self.wlan.id, iface1_data=interface)
 
     self.Mobility.register_core_nodes(self.nodes)
     self.Mobility.start()
@@ -175,7 +159,8 @@ class Runner():
     delay = core_settings['core_settings']['delay']
     jitter = core_settings['core_settings']['jitter']
     error = core_settings['core_settings']['error']
-    return radius, bandwidth, delay, jitter, error
+    emane = True if core_settings['core_settings']['emane'].upper() == "TRUE" else False
+    return radius, bandwidth, delay, jitter, error, emane
 
   def server_thread(self):
     'Starts a thread with the Socket.io instance that will serve the HMI'
@@ -361,7 +346,7 @@ class Runner():
     for i in range(0,self.number_of_nodes):
       shell = self.session.get_node(i+1, CoreNode).termcmdstring(sh="/bin/bash")
       #command = "ip link set eth0 address 0A:AA:00:00:00:" + '{:02x}'.format(i+2) +  " && batctl if add eth0 && ip link set up bat0 && ip addr add 10.0.1." +str(i+2) + "/255.255.255.0 broadcast 10.0.1.255 dev bat0"
-      command = "modprobe batman-adv && batctl ra BATMAN_V && batctl if add eth0 && ip link set up bat0 && ip addr add 10.0.1." +str(i+1) + "/255.255.255.0 broadcast 10.0.1.255 dev bat0"
+      command = "modprobe batman-adv && batctl ra BATMAN_IV && batctl if add eth0 && ip link set up bat0 && ip addr add 10.0.1." +str(i+1) + "/255.255.255.0 broadcast 10.0.1.255 dev bat0"
       shell += " -c '" + command + "'"
       node = subprocess.Popen([
                     "xterm",

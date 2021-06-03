@@ -24,6 +24,12 @@
         "fault_detector": "fast",
         "role": "node",
         "start_delay": 5
+      },
+      "omnet_settings": {
+        "omnet_include_path" : "/opt/omnet/inet/src:./topologies/NewTest/simulations",
+        "symemtrical_static" : "./topologies/NewTest/simulations/omnetpp.ini",
+        "symemtrical_mob"    : "./topologies/NewTest/simulations/omnetpp.ini",
+        "ini_file"           : "./topologies/NewTest/simulations/nonmob.ini"
       }
     }
   ],
@@ -37,9 +43,10 @@
   "core_settings": {
     "radius": "120",
     "bandwidth": "433300000",
-    "delay": "1500",
+    "delay": "500",
     "jitter": "0",
-    "error": "1"
+    "error": "1",
+    "emane": "False"
   },
   "etcd": {
     "omnet": "False",
@@ -55,9 +62,8 @@
     "core": "True",
     "disks": "True",
     "dump": "False",
-    "topology": "symmetrical",
-    "mobility": "none",
-    "number_of_nodes": 9
+    "topology": "fullmeshWobn",
+    "mobility": "none"
   },
   "vm": {
     "core": "True",
@@ -78,13 +84,13 @@
   },
   "rasp": {
     "core": "True",
-    "disks": "True",
+    "disks": "False",
     "dump": "False",
     "topology": "symmetrical",
     "mobility": "none",
-    "number_of_nodes": 2,
-    "kernel": "/opt/rasp/kernel/kernel-qemu-4.14.50-stretch",
-    "dtb": "/opt/rasp/kernel/versatile-pb.dtb",
+    "number_of_nodes": 1,
+    "kernel": "/opt/rasp/kernel/qemu-kernel-4.19.71",
+    "dtb": "/opt/rasp/kernel/versatile-pb-rt.dtb",
     "image_sufix": "/opt/rasp/image/raspbian",
     "mac_sufix": "52:55:0a:CA:FE:",
     "tap_interface": "tap0"

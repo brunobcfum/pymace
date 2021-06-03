@@ -166,7 +166,7 @@ if __name__ == '__main__':  #for main run the main function. This is only run wh
         args = parser.parse_args()
         #print(args)
 
-        Node = node.Node(args.tag, energy_model, args.application, args.role, args.time_scale, args.battery, args.ip.upper(), args.protocol, args.membership, args.fault_detector) #create node object
+        Node = node.Node(args.tag, args.energy, args.application, args.role, args.time_scale, args.battery, args.ip.upper(), args.protocol, args.membership, args.fault_detector) #create node object
         prompt = prompt.Prompt(Node)
         logger = log.Log(Node, args.tag, args.role, args.energy, args.mobility)
         logger.clean_nodedumps(Node)

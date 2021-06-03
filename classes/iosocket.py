@@ -126,12 +126,15 @@ class Socket(flask.Flask):
                 nodedata['id'] = node.id
                 data['nodes'].append(nodedata)
                 it += 1
-            data['wlan']['model'] = self.modelname
-            data['wlan']['range'] = self.session.mobility.get_model_config(self.wlan.id, self.modelname)['range']
-            data['wlan']['bandwidth'] = self.session.mobility.get_model_config(self.wlan.id, self.modelname)['bandwidth']
-            data['wlan']['jitter'] = self.session.mobility.get_model_config(self.wlan.id, self.modelname)['jitter']
-            data['wlan']['delay'] = self.session.mobility.get_model_config(self.wlan.id, self.modelname)['delay']
-            data['wlan']['error'] = self.session.mobility.get_model_config(self.wlan.id, self.modelname)['error']
+            try:
+                data['wlan']['model'] = self.modelname
+                data['wlan']['range'] = self.session.mobility.get_model_config(self.wlan.id, self.modelname)['range']
+                data['wlan']['bandwidth'] = self.session.mobility.get_model_config(self.wlan.id, self.modelname)['bandwidth']
+                data['wlan']['jitter'] = self.session.mobility.get_model_config(self.wlan.id, self.modelname)['jitter']
+                data['wlan']['delay'] = self.session.mobility.get_model_config(self.wlan.id, self.modelname)['delay']
+                data['wlan']['error'] = self.session.mobility.get_model_config(self.wlan.id, self.modelname)['error']
+            except:
+                pass
             time.sleep(0.04)
             self.socketio.emit('nodes', {'data': data}, namespace='/sim')
 

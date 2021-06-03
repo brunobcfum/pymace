@@ -1,0 +1,162 @@
+[
+  {
+    "_id": 0,
+    "x": 101.5,
+    "y": 102,
+    "fill": "#1100FF",
+    "stroke": "black",
+    "strokeWidth": 0,
+    "shadowBlur": 1,
+    "shadowOffset": {
+      "x": 2,
+      "y": 2
+    },
+    "shadowOpacity": 0.2,
+    "opacity": 0.8,
+    "draggable": true,
+    "radius": 6,
+    "shadowColor": "black",
+    "type": "node",
+    "range": 120
+  },
+  {
+    "_id": 1,
+    "x": 99.5,
+    "y": 198,
+    "fill": "#1100FF",
+    "stroke": "black",
+    "strokeWidth": 0,
+    "shadowBlur": 1,
+    "shadowOffset": {
+      "x": 2,
+      "y": 2
+    },
+    "shadowOpacity": 0.2,
+    "opacity": 0.8,
+    "draggable": true,
+    "radius": 6,
+    "shadowColor": "black",
+    "type": "node",
+    "range": 120
+  },
+  {
+    "_id": 2,
+    "x": 201.5,
+    "y": 181,
+    "fill": "#1100FF",
+    "stroke": "black",
+    "strokeWidth": 0,
+    "shadowBlur": 1,
+    "shadowOffset": {
+      "x": 2,
+      "y": 2
+    },
+    "shadowOpacity": 0.2,
+    "opacity": 0.8,
+    "draggable": true,
+    "radius": 6,
+    "shadowColor": "black",
+    "type": "node",
+    "range": 120
+  },
+  {
+    "_id": 3,
+    "x": 300.5,
+    "y": 182,
+    "fill": "#1100FF",
+    "stroke": "black",
+    "strokeWidth": 0,
+    "shadowBlur": 1,
+    "shadowOffset": {
+      "x": 2,
+      "y": 2
+    },
+    "shadowOpacity": 0.2,
+    "opacity": 0.8,
+    "draggable": true,
+    "radius": 6,
+    "shadowColor": "black",
+    "type": "node",
+    "range": 120
+  },
+  {
+    "_id": 4,
+    "x": 400.5,
+    "y": 100,
+    "fill": "#1100FF",
+    "stroke": "black",
+    "strokeWidth": 0,
+    "shadowBlur": 1,
+    "shadowOffset": {
+      "x": 2,
+      "y": 2
+    },
+    "shadowOpacity": 0.2,
+    "opacity": 0.8,
+    "draggable": true,
+    "radius": 6,
+    "shadowColor": "black",
+    "type": "node",
+    "range": 120
+  },
+  {
+    "_id": 5,
+    "x": 399.5,
+    "y": 200,
+    "fill": "#1100FF",
+    "stroke": "black",
+    "strokeWidth": 0,
+    "shadowBlur": 1,
+    "shadowOffset": {
+      "x": 2,
+      "y": 2
+    },
+    "shadowOpacity": 0.2,
+    "opacity": 0.8,
+    "draggable": true,
+    "radius": 6,
+    "shadowColor": "black",
+    "type": "node",
+    "range": 120
+  },
+  {
+    "_id": 6,
+    "x": 199.5,
+    "y": 131,
+    "fill": "#1100FF",
+    "stroke": "black",
+    "strokeWidth": 0,
+    "shadowBlur": 1,
+    "shadowOffset": {
+      "x": 2,
+      "y": 2
+    },
+    "shadowOpacity": 0.2,
+    "opacity": 0.8,
+    "draggable": true,
+    "radius": 6,
+    "shadowColor": "black",
+    "type": "node",
+    "range": 120
+  },
+  {
+    "_id": 7,
+    "x": 300.5,
+    "y": 130,
+    "fill": "#1100FF",
+    "stroke": "black",
+    "strokeWidth": 0,
+    "shadowBlur": 1,
+    "shadowOffset": {
+      "x": 2,
+      "y": 2
+    },
+    "shadowOpacity": 0.2,
+    "opacity": 0.8,
+    "draggable": true,
+    "radius": 6,
+    "shadowColor": "black",
+    "type": "node",
+    "range": 120
+  }
+]

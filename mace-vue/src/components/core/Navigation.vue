@@ -24,6 +24,7 @@
           <v-list-item-title>Live Observer</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
+
     <v-list-item @click="openCreator">
       <v-list-item-action>
           <v-icon>mdi-lan</v-icon>
@@ -32,6 +33,16 @@
           <v-list-item-title>Topology Creator</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
+
+    <v-list-item @click="opendNetFlow">
+      <v-list-item-action>
+          <v-icon>mdi-lan</v-icon>
+      </v-list-item-action>
+      <v-list-item-content>
+          <v-list-item-title>dNetFlow Creator</v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+
     <v-list-item @click="openAbout">
       <v-list-item-action>
           <v-icon>mdi-help-circle</v-icon>
@@ -75,6 +86,14 @@ export default {
     openCreator () {
       this.$router.push({
         name: 'creator'
+      }).catch(err => {
+        if (err.name != "NavigationDuplicated") {
+          throw err;
+        }})
+    },
+    opendNetFlow () {
+      this.$router.push({
+        name: 'dnetflow'
       }).catch(err => {
         if (err.name != "NavigationDuplicated") {
           throw err;

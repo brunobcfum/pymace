@@ -8,7 +8,7 @@ __maintainer__ = "Bruno Chianca Ferreira"
 __email__ = "brunobcf@gmail.com"
 
 
-import  traceback, os, logging, time, subprocess, threading
+import  traceback, os, logging, time, subprocess, threading, json, sys
 from classes.runner.runner import Runner
 
 from core.nodes.base import CoreNode
@@ -24,7 +24,10 @@ class TERMRunner(Runner):
 
   def setup(self, emulation):
     self.topology = emulation['term']['topology']
-    self.number_of_nodes = emulation['term']['number_of_nodes']
+    topology_file = open("./topologies/" + self.topology + ".json","r").read()
+    topology = json.loads(topology_file)
+    #self.number_of_nodes = emulation['term']['number_of_nodes']
+    self.number_of_nodes = len(topology)
     self.omnet = True if emulation['term']['omnet'] == "True" else False
     self.core = True if emulation['term']['core'] == "True" else False
     self.disks = True if emulation['term']['disks'] == "True" else False

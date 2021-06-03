@@ -27,13 +27,14 @@ class Battery:
         self.battery_full_energy = full_energy * self.voltage * 3.6  # Joules
         self.battery_energy  = self.battery_full_energy * (battery_mul / 100) 
         self.battery_percent = self.battery_energy / self.battery_full_energy   
-        self.deepSleep_current = energy_model['deepSleep_current'] 
-        self.modemSleep_current = energy_model['modemSleep_current'] 
-        self.awake_current = energy_model['awake_current'] 
-        self.rx_current = energy_model['rx_current'] 
-        self.tx_current = energy_model['tx_current'] 
-        self.sensor_energy = energy_model['sensor_energy'] #25mA / 3600s  -> this value in mAh every second
-        self.processor_multiplier = energy_model['multiplier']
+        #TODO: Add Battery drain option
+        #self.deepSleep_current = energy_model['deepSleep_current'] 
+        #self.modemSleep_current = energy_model['modemSleep_current'] 
+        #self.awake_current = energy_model['awake_current'] 
+        #self.rx_current = energy_model['rx_current'] 
+        #self.tx_current = energy_model['tx_current'] 
+        #self.sensor_energy = energy_model['sensor_energy'] #25mA / 3600s  -> this value in mAh every second
+        #self.processor_multiplier = energy_model['multiplier']
         #### ENERGY ###############################################################################
         self.computational_energy = 0  #this accumulates the energy spent in calculations
         self.communication_energy = 0  #this accumulates the energy spent in communication

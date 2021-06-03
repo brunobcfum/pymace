@@ -112,7 +112,7 @@ class Node:
 
     #if pprz_interface:
     self.PprzInterface = pprz_interface.Interface(self)
-    self.Mobility = mobility.Mobility(self)
+    #self.Mobility = mobility.Mobility(self)
 
     self.Tracer = tracer.Tracer(self, self.tag) #create tracer object 
 

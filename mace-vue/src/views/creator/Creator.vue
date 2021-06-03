@@ -3,7 +3,7 @@
     <v-row>
       <Toolbox 
       v-on:grid_changed="update_grid"
-      v-on:radius_changed="update_radius"
+      v-on:range_changed="update_range"
       v-on:save="save"
       v-on:load="load"
       v-on:clear="clear"
@@ -39,9 +39,8 @@
               :config="{
                 x: item.x,
                 y: item.y,
-                radius: 50,
+                radius: item.range,
                 fill: '#111111',
-                radius: radius,
                 draggable: false,
                 opacity: 0.05,
                 stroke: '#1100FF',
@@ -103,7 +102,7 @@ export default {
         shadowBlur: 0
       },
       list: [],
-      radius: 120,
+      range: 120,
       hLines: [],
       vLines: [],
       nodes: 0,
@@ -116,7 +115,7 @@ export default {
     handleDragstart () {
     },
     save () {
-      const blob = new Blob([JSON.stringify(this.list)], {type: 'text/json'})
+      const blob = new Blob([JSON.stringify(this.list, null, 2)], {type: 'text/json'})
       const e = document.createEvent('MouseEvents')
       const a = document.createElement('a')
       a.download = this.filename
@@ -167,7 +166,8 @@ export default {
           draggable: true,
           radius: 6,
           shadowColor: 'black',
-          type: 'node'
+          type: 'node',
+          range: this.range
         })
         this.nodes++
       }
@@ -175,8 +175,8 @@ export default {
     update_grid (event) {
       this.gridSize = event
     },
-    update_radius (event) {
-      this.radius = event
+    update_range (event) {
+      this.range = event
     },
     createGrid () {
       if (this.configKonva.width > this.$refs.scenarioCanvas.clientWidth) {

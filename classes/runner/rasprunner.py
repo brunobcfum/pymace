@@ -110,6 +110,7 @@ class RaspRunner(Runner):
       command += " -no-reboot"
       command += " -net nic,macaddr=" + self.mac_sufix + str('{0:0{1}X}'.format(i,2))# + " -net user"
       command += " -net tap,ifname=" + self.tap_interface + ",script=no,downscript=no"
+      print(command)
       shell += " -c '" + command + "'"
       node = subprocess.Popen([
                       "xterm",

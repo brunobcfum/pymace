@@ -132,7 +132,7 @@ export default {
       this.$emit('grid_changed', this.grid_size)
     },
     radius_size: function () {
-      this.$emit('radius_changed', this.radius_size)
+      this.$emit('range_changed', this.radius_size)
     }
   }
 }

@@ -12,7 +12,7 @@ __email__ = "brunobcf@gmail.com"
 
 import  sys, traceback, json, os, argparse, logging, shutil, time, subprocess, socket, auxiliar, threading, requests, pickle, struct
 
-from classes.runner import runner
+from classes.runner.runner import Runner
 from classes.runner.termrunner import TERMRunner
 from classes.runner.etcdrunner import ETCDRunner
 from classes.runner.vmrunner import VMRunner
