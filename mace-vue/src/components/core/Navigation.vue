@@ -34,14 +34,16 @@
       </v-list-item-content>
     </v-list-item>
 
-    <v-list-item @click="opendNetFlow">
+    <v-list-item @click="openManager">
       <v-list-item-action>
-          <v-icon>mdi-lan</v-icon>
+          <v-icon>mdi-harddisk</v-icon>
       </v-list-item-action>
       <v-list-item-content>
-          <v-list-item-title>dNetFlow Creator</v-list-item-title>
+          <v-list-item-title>Images Manager</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
+    
+    <v-spacer></v-spacer>
 
     <v-list-item @click="openAbout">
       <v-list-item-action>

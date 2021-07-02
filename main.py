@@ -153,7 +153,7 @@ if __name__ == '__main__':  #for main run the main function. This is only run wh
         parser.add_argument("application", help="Which application you want to use")
         parser.add_argument("time_scale", help="Time scaler to make the application run faster(<1) or slower(>1)", type=float)
         parser.add_argument("time_limit", help="Simulation runtime limit in seconds", type=int)
-        parser.add_argument("mobility", help="The mobility model being use for reporting reasons")
+        #parser.add_argument("mobility", help="The mobility model being use for reporting reasons")
         parser.add_argument("ip", help="IP protocol: ipv4 or ipv6", choices=['ipv4', 'ipv6'])
         parser.add_argument("-v", "--verbosity", action="store_true", help="Verbose output")
         parser.add_argument("-b", "--battery", type=int, help="Initial battery level", default=100)
@@ -162,11 +162,12 @@ if __name__ == '__main__':  #for main run the main function. This is only run wh
         parser.add_argument("-p", "--protocol", type=str, help="Communication protocol", default="sockets")
         parser.add_argument("-m", "--membership", type=str, help="Membership control", default="local")
         parser.add_argument("-f", "--fault_detector", type=str, help="Fault Detector", default="simple")
+        parser.add_argument("-o", "--mobility", type=str, help="Mobility Model", default="Random_Walk")
 
         args = parser.parse_args()
         #print(args)
 
-        Node = node.Node(args.tag, args.energy, args.application, args.role, args.time_scale, args.battery, args.ip.upper(), args.protocol, args.membership, args.fault_detector) #create node object
+        Node = node.Node(args.tag, args.energy, args.mobility, args.application, args.role, args.time_scale, args.battery, args.ip.upper(), args.protocol, args.membership, args.fault_detector) #create node object
         prompt = prompt.Prompt(Node)
         logger = log.Log(Node, args.tag, args.role, args.energy, args.mobility)
         logger.clean_nodedumps(Node)

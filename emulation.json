@@ -88,7 +88,7 @@
     "dump": "False",
     "topology": "symmetrical",
     "mobility": "none",
-    "number_of_nodes": 1,
+    "number_of_nodes": 2,
     "kernel": "/opt/rasp/kernel/qemu-kernel-4.19.71",
     "dtb": "/opt/rasp/kernel/versatile-pb-rt.dtb",
     "image_sufix": "/opt/rasp/image/raspbian",

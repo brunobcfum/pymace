@@ -33,7 +33,7 @@
                   <v-list-item-subtitle>Model: {{ wlan.model }}</v-list-item-subtitle>
                   <v-list-item-subtitle>Range: {{ wlan.range }}  m</v-list-item-subtitle>
                   <v-list-item-subtitle>Bandwidth: {{ bandwidth }} MBps</v-list-item-subtitle>
-                  <v-list-item-subtitle>Delay: {{ wlan.delay }} ms</v-list-item-subtitle>
+                  <v-list-item-subtitle>Delay: {{ wlan.delay }} us</v-list-item-subtitle>
                   <v-list-item-subtitle>Error rate: {{ wlan.error }} %</v-list-item-subtitle>
                   <v-list-item-subtitle>Jitter: {{ wlan.jitter }} us</v-list-item-subtitle>
                 </v-list-item-content>
@@ -62,7 +62,7 @@
                   <v-switch
                   class="pl-3"
                   v-model="options.graph"
-                  label="Connection Graph"
+                  label="Connection Line"
                   ></v-switch>
                 </v-list-item-subtitle>
                 <v-list-item-subtitle>

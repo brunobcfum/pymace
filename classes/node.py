@@ -33,7 +33,7 @@ from classes.apps.murmur import murmur
 from classes.apps.dbrb import dbrb
 
 class Node:
-  def __init__(self, tag, energy_model, application, role, time_scale, initBattery, ip, net, membership='local', fault_detector='simple'):
+  def __init__(self, tag, energy_model, mobility_model, application, role, time_scale, initBattery, ip, net, membership='local', fault_detector='simple'):
     'Initializes the properties of the Node object'
     random.seed(tag)
     ##################### DEFAULT SETTINGS ####################################################################
@@ -112,7 +112,7 @@ class Node:
 
     #if pprz_interface:
     self.PprzInterface = pprz_interface.Interface(self)
-    #self.Mobility = mobility.Mobility(self)
+    self.Mobility = mobility.Mobility(self, mobility_model)
 
     self.Tracer = tracer.Tracer(self, self.tag) #create tracer object 
 

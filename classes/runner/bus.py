@@ -8,7 +8,7 @@ __maintainer__ = "Bruno Chianca Ferreira"
 __email__ = "brunobcf@gmail.com"
 
 
-import  traceback, os, logging, time, subprocess, threading
+import  traceback, os, logging, time, subprocess, threading, socket, pickle, struct
 
 
 class Bus():
