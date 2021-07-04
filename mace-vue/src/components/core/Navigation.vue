@@ -34,7 +34,7 @@
       </v-list-item-content>
     </v-list-item>
 
-    <v-list-item @click="openManager">
+    <v-list-item @click="openImageManager">
       <v-list-item-action>
           <v-icon>mdi-harddisk</v-icon>
       </v-list-item-action>
@@ -93,9 +93,9 @@ export default {
           throw err;
         }})
     },
-    opendNetFlow () {
+    openImageManager () {
       this.$router.push({
-        name: 'dnetflow'
+        name: 'image'
       }).catch(err => {
         if (err.name != "NavigationDuplicated") {
           throw err;

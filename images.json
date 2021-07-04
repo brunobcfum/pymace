@@ -1,0 +1,22 @@
+[
+  {
+    "id": "244c6dab708adcb5b58cefad7561f37fbc04d6da",
+    "kernel": "/opt/rasp/kernel/qemu-kernel-4.19.71",
+    "initrd": "",
+    "imagefile": "/opt/rasp/image/raspbian0.iso",
+    "dtb": "/opt/rasp/kernel/versatile-pb-rt.dtb",
+    "name": "Raspbian 0",
+    "description": "Image for running a raspbian session",
+    "type": "Raspberry PI"
+  },
+  {
+    "id": "b483c692bcf4bb00da05e5be8618276f359a6290",
+    "kernel": "/opt/rasp/kernel/qemu-kernel-4.19.71",
+    "initrd": "",
+    "imagefile": "/opt/rasp/image/raspbian1.iso",
+    "dtb": "/opt/rasp/kernel/versatile-pb-rt.dtb",
+    "name": "Raspbian 1",
+    "description": "Image for running a raspbian session",
+    "type": "Raspberry PI"
+  }
+]

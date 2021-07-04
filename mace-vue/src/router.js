@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Creator from './views/creator/Creator.vue'
-import dNetFlow from './views/dnetflow/dNetFlow.vue'
+import ImageManager from './views/image/ImageManager.vue'
 import Observer from './views/observer/Observer.vue'
 import NotFound from './components/core/NotFound.vue'
 import About from './components/core/About.vue'
@@ -23,9 +23,9 @@ export default new Router({
       component: Creator
     },
     {
-      path: '/dnetflow',
-      name: 'dnetflow',
-      component: dNetFlow
+      path: '/image',
+      name: 'image',
+      component: ImageManager
     },
     {
       path: '/about',

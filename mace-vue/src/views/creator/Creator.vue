@@ -128,6 +128,8 @@ export default {
       var reader = new FileReader()
       reader.onload = (file) => {
         this.list = JSON.parse(file.target.result)
+        const data = JSON.stringify(this.list)
+        localStorage.setItem('creator_nodes', data)
       }
       reader.readAsText(file)
     },
@@ -146,6 +148,8 @@ export default {
           this.list[i]._id = i
         }
         this.nodes--
+        const data = JSON.stringify(this.list)
+        localStorage.setItem('creator_nodes', data)
       }
     },
     handleClick (evt) {
@@ -170,6 +174,8 @@ export default {
           range: this.range
         })
         this.nodes++
+        const data = JSON.stringify(this.list)
+        localStorage.setItem('creator_nodes', data)
       }
     },
     update_grid (event) {
@@ -222,6 +228,9 @@ export default {
       this.configMapBack.width = this.configKonva.width
       this.configMapBack.height = this.configKonva.height
     }
+  },
+  created () {
+    this.list = JSON.parse(localStorage.getItem('creator_nodes')) || []
   },
   watch: {
     configKonva: {
