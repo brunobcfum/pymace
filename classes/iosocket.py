@@ -5,7 +5,7 @@ from flask_socketio import SocketIO, emit
 import flask, json, requests, os, socket, traceback, threading, time, logging
 from multiprocessing import Process
 
-from pymobility.models.mobility import random_waypoint
+#from mobility.pymobility.models.mobility import random_waypoint
 
 motes_global = []
 class Socket(flask.Flask):
@@ -28,7 +28,7 @@ class Socket(flask.Flask):
         self.wlan = wlan
         self.session = session
         self.modelname = modelname
-        self.rw = random_waypoint(len(self.nodes), dimensions=(220, 220), velocity=(0.5, 2.0), wt_max=1.0)
+        #self.rw = random_waypoint(len(self.nodes), dimensions=(220, 220), velocity=(0.5, 2.0), wt_max=1.0)
         for node in self.nodes:
             self.initial_nodes[node.id] = node.getposition()
         @app.route("/")
@@ -116,7 +116,7 @@ class Socket(flask.Flask):
         data['wlan'] = {}
         while self.lock:
             data['nodes'].clear()
-            positions = next(self.rw)
+            #positions = next(self.rw)
             it = 0
             for node in self.nodes:
                 #node.setposition(node.getposition()[0] + 1,node.getposition()[1])

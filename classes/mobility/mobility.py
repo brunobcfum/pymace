@@ -2,7 +2,7 @@
 
 import pickle, socket, traceback, struct
 from apscheduler.schedulers.background import BackgroundScheduler
-from pymobility.models.mobility import *
+from classes.mobility.pymobility.models.mobility import *
 from classes import pprz_interface
 
 class Mobility():

@@ -361,7 +361,7 @@ class Runner():
     for i in range(0,self.number_of_nodes):
       shell = self.session.get_node(i+1, CoreNode).termcmdstring(sh="/bin/bash")
       command = "export PYTHONPATH=/home/bruno/Documents/bruno-onera-enac-doctorate/software/pprzlink/lib/v2.0/python && "
-      command += "cd /opt/Projetos/pymace && "
+      command += "cd /opt/pymace && "
       command += "./main.py drone"+ str(i) + " " + self.application + " " 
       command += str(self.time_scale) + " " + str(self.time_limit) + " -p " 
       command += self.network  + " ipv4 -b 100 -r node"
