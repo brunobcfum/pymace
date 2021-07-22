@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 
-""" 
-Main simulation runner is part of the pymace project.
-This contains the main runner that will run in each node. This is called by the pymace main emulation script,
+"""
+When studying distributed systems, it is usefull to play with concepts and create prototype applications.
+This main runner aims in helping with the prototyping, so that an application can be created as a class in ./classes/apps
+This code contains the main runner that will run in each node. This is called by the pymace main emulation script,
 but can be called manually when running on real hardware or when running manually for testing.
+
+Other support classes are also in ./classes to bootstrap some basic funcionality, but are completelly optional since most is
+already covered by better python libraries.
+
 """
 __author__ = "Bruno Chianca Ferreira"
 __license__ = "MIT"

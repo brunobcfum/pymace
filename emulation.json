@@ -65,6 +65,16 @@
     "topology": "fullmeshWobn",
     "mobility": "none"
   },
+  "app": {
+    "appdir": "",
+    "app": "",
+    "omnet": "False",
+    "core": "True",
+    "disks": "True",
+    "dump": "False",
+    "topology": "fullmeshWobn",
+    "mobility": "none"
+  },
   "vm": {
     "core": "True",
     "disks": "True",

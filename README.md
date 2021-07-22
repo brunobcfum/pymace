@@ -36,7 +36,6 @@ flask
 flask_socketio==4.3.2
 apscheduler
 ping3
-opencv-python
 geopy
 pymobility
 

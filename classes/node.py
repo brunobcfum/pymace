@@ -24,13 +24,9 @@ from classes.mobility import mobility
 # Applications classes for each required application to be tested
 
 from classes.apps.traffic import traffic
-from classes.apps.blockchain import blockchain
-from classes.apps.pprz import pprz, pprz_t
 from classes.apps.paxos import paxos
 from classes.apps.multipaxos import multipaxos
 from classes.apps.rsm import rsm
-from classes.apps.murmur import murmur
-from classes.apps.dbrb import dbrb
 
 class Node:
   def __init__(self, tag, energy_model, mobility_model, application, role, time_scale, initBattery, ip, net, membership='local', fault_detector='simple'):
@@ -91,20 +87,12 @@ class Node:
 
     if application.upper() == 'TRAFFIC':
       self.Application = traffic.App(self, self.tag, self.multiplier, self.second) #create network object
-    elif application.upper() == 'BLOCKCHAIN':
-      self.Application = blockchain.App(self, self.tag, self.multiplier, self.second) #create network object
-    elif application.upper() == 'PPRZLINK':
-      self.Application = pprz_t.App(self, self.tag, self.multiplier, self.second) #create network object
     elif application.upper() == 'PAXOS':
       self.Application = paxos.App(self, self.tag, self.multiplier, self.second) #create network object
     elif application.upper() == 'MULTIPAXOS':
       self.Application = multipaxos.App(self, self.tag, self.multiplier, self.second) #create network object
     elif application.upper() == 'RSM':
       self.Application = rsm.App(self, self.tag, self.multiplier, self.second) #create network object
-    elif application.upper() == 'MURMUR':
-      self.Application = murmur.App(self, self.tag, self.multiplier, self.second) #create network object
-    elif application.upper() == 'DBRB':
-      self.Application = dbrb.App(self, self.tag, self.multiplier, self.second) #create network object
     else:
       print("application not found...quitting")
       os._exit(1)
