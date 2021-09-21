@@ -19,6 +19,7 @@ from classes.runner.vmrunner import VMRunner
 from classes.runner.armrunner import ARMRunner
 from classes.runner.rasprunner import RaspRunner
 from classes.runner.dockerrunner import DockerRunner
+from classes.runner.riotrunner import RIOTRunner
 from classes.runner.bus import Bus
 
 
@@ -55,6 +56,10 @@ def main():
       runner = _setup_arm()
       _start(runner, 1)
       _shutdown()
+    elif args.command.upper() == 'RIOT':
+      runner = _setup_riot()
+      _start(runner, 1)
+      _shutdown()
     elif args.command.upper() == 'DOCKER':
       runner = _setup_docker()
       _start(runner, 1)
@@ -88,6 +93,24 @@ def _setup():
     ### TODO: Move this to start
     runner = Runner(emulation)
     return runner, repetitions
+
+def _setup_riot():
+  """ 
+  Method for reading the RIOT settings
+
+  Parameters
+  ----------
+
+  Returns
+  --------
+  runner - The runner that will be used
+
+  """
+  emulation_file = open("./emulation.json","r").read()
+  emulation = json.loads(emulation_file)
+  ### TODO: Move this to start
+  runner = RIOTRunner(emulation)
+  return runner
 
 def _setup_etcd():
   """ 
@@ -300,7 +323,7 @@ if __name__ == '__main__':
     print()
 
     parser = argparse.ArgumentParser(description='Some arguments are obligatory and must follow the correct order as indicated')
-    parser.add_argument("command", help="Main command to execute: run a configured emulation or create a new application.", choices=['run', 'new', 'clean', 'etcd', 'term', 'vm', 'docker', 'rasp', 'arm'])
+    parser.add_argument("command", help="Main command to execute: run a configured emulation or create a new application.", choices=['run', 'new', 'clean', 'etcd', 'term', 'vm', 'docker', 'rasp', 'arm', 'riot'])
     parser.add_argument("name", help="New application name", nargs='?')
     parser.add_argument("-l", "--log", help="Log level", choices=['debug', 'info', 'warning', 'error', 'critical'],default="info")
     args = parser.parse_args()

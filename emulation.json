@@ -75,6 +75,18 @@
     "topology": "fullmeshWobn",
     "mobility": "none"
   },
+  "riot": {
+    "app_dir": "/opt/RIOT/examples/blinky/bin/native",
+    "app": "blinky.elf",
+    "omnet": "False",
+    "core": "True",
+    "disks": "True",
+    "dump": "False",
+    "topology": "fullmeshWobn",
+    "mobility": "none",
+    "serial": "True",
+    "number_of_nodes": 2
+  },
   "vm": {
     "core": "True",
     "disks": "True",
