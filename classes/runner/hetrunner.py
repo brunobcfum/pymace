@@ -42,6 +42,7 @@ class HETRunner(Runner):
     self.node_options_mobile = []
     self.core_nodes_fixed = []
     self.core_nodes_mobile = []
+    self.nodes_padding = 0 
     self.setup(scenario)
 
   def setup(self, scenario):
@@ -118,14 +119,17 @@ class HETRunner(Runner):
     self.session.set_state(EventTypes.CONFIGURATION_STATE)
     fixed_wlan_options = NodeOptions(name='uwlan', x=200, y=200)
     mobile_wlan_options = NodeOptions(name='mwlan', x=0, y=0)
-    self.fixed_wlan = self.session.add_node(WlanNode,options=fixed_wlan_options )
-    self.mobile_wlan = self.session.add_node(WlanNode,options=mobile_wlan_options )
+    self.fixed_wlan = self.session.add_node(WlanNode,options=fixed_wlan_options, _id = 1)
+    self.nodes_padding += 1 
+    self.mobile_wlan = self.session.add_node(WlanNode,options=mobile_wlan_options, _id = 2 )
+    self.nodes_padding += 1 
     self.modelname = BasicRangeModel.name
     self.session.mobility.set_model_config(self.fixed_wlan.id, BasicRangeModel.name,self.fixed_core_settings)
     self.session.mobility.set_model_config(self.mobile_wlan.id, BasicRangeModel.name,self.mobile_core_settings)
 
     for node_opt in self.node_options_fixed:
-      self.core_nodes_fixed.append(self.session.add_node(CoreNode, options=node_opt))
+      self.core_nodes_fixed.append(self.session.add_node(CoreNode, options=node_opt, _id=self.nodes_padding+1))
+      self.nodes_padding +=1
 
     for node_opt in self.node_options_mobile:
       self.core_nodes_mobile.append(self.session.add_node(CoreNode, options=node_opt))
@@ -150,7 +154,17 @@ class HETRunner(Runner):
     pass
 
   def configure_batman(self):
-    pass
+    process = []
+    for i in range(0,self.number_of_nodes):
+      shell = self.session.get_node(i+1, CoreNode).termcmdstring(sh="/bin/bash")
+      #command = "ip link set eth0 address 0A:AA:00:00:00:" + '{:02x}'.format(i+2) +  " && batctl if add eth0 && ip link set up bat0 && ip addr add 10.0.1." +str(i+2) + "/255.255.255.0 broadcast 10.0.1.255 dev bat0"
+      command = "modprobe batman-adv && batctl ra BATMAN_IV && batctl if add eth0 && ip link set up bat0 && ip addr add 10.0.1." +str(i+1) + "/255.255.255.0 broadcast 10.0.1.255 dev bat0"
+      shell += " -c '" + command + "'"
+      node = subprocess.Popen([
+                    "xterm",
+                    "-e",
+                    shell], stdin=subprocess.PIPE, shell=False)
+      process.append(node)
 
   def server_thread(self):
     'Starts a thread with the Socket.io instance that will serve the HMI'
@@ -174,6 +188,8 @@ class HETRunner(Runner):
     
     sthread = threading.Thread(target=self.server_thread, args=())
     sthread.start()
+
+    terminals = self.start_terminal(1)
   
     #self.configure_bridge()
     #self.configure_serial(self.number_of_nodes)
@@ -188,6 +204,22 @@ class HETRunner(Runner):
 
     os.system("sudo killall xterm")
     os.system("chown -R " + username + ":" + username + " ./reports")
+
+  def start_terminal(self, session, number_of_nodes):
+    ### TODO: add all application starts to inside node class
+    print("Starting Terminals in CORE")
+    nodes = {}
+    for i in range(0,number_of_nodes):
+      shell = session.get_node(i+3, CoreNode).termcmdstring(sh="/bin/bash")
+      command = ""
+      #shell += " -c '" + command + "'"
+      node = subprocess.Popen([
+                      "xterm",
+                      #"-xrm 'XTerm.vt100.allowTitleOps: false' -title drone" + str(i),
+                      "-e",
+                      shell], stdin=subprocess.PIPE, shell=False)
+      nodes["drone" + str(i)] = node
+    return nodes
 
   def configure_serial(self, number_of_nodes):
     pass
