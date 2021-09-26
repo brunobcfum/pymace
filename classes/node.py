@@ -29,19 +29,19 @@ from classes.apps.multipaxos import multipaxos
 from classes.apps.rsm import rsm
 
 class Node:
-  def __init__(self, tag, energy_model, mobility_model, application, role, time_scale, initBattery, ip, net, membership='local', fault_detector='simple'):
+  def __init__(self, tag, node_number, energy_model, mobility_model, application, role, time_scale, initBattery, ip, net, membership='local', fault_detector='simple'):
     'Initializes the properties of the Node object'
     random.seed(tag)
     ##################### DEFAULT SETTINGS ####################################################################
     self.lock  = True # when this is false the simulation stops
     self.stop = False
-    self.prompt_str = tag + "#>"
     #### Simulation specific ##################################################################################
     self.multiplier = time_scale #time multiplier for the simulator
     self.second = 1000 * self.multiplier #duration of a second in ms // this is the simulation second. If value is 1000, it means that one second is 1000 mili seconds
     #### NODE #################################################################################################
     self.role = role #are we a node or a ua?
-    self.tag = tag #the name of the sensor
+    self.fulltag = tag + str(node_number) #the name of the sensor
+    self.tag_number = node_number
     self.load = 0 # processor load
     #### UTILITIES ############################################################################################
     self.simulation_seconds = 0 # this is the total time spent in the simulation time
@@ -86,13 +86,13 @@ class Node:
     ### This should be done with a base app, the other apps inherit and expand. 
 
     if application.upper() == 'TRAFFIC':
-      self.Application = traffic.App(self, self.tag, self.multiplier, self.second) #create network object
+      self.Application = traffic.App(self, self.fulltag, self.multiplier, self.second) #create network object
     elif application.upper() == 'PAXOS':
-      self.Application = paxos.App(self, self.tag, self.multiplier, self.second) #create network object
+      self.Application = paxos.App(self, self.fulltag, self.multiplier, self.second, self.tag_number) #create network object
     elif application.upper() == 'MULTIPAXOS':
-      self.Application = multipaxos.App(self, self.tag, self.multiplier, self.second) #create network object
+      self.Application = multipaxos.App(self, self.fulltag, self.multiplier, self.second, self.tag_number) #create network object
     elif application.upper() == 'RSM':
-      self.Application = rsm.App(self, self.tag, self.multiplier, self.second) #create network object
+      self.Application = rsm.App(self, self.fulltag, self.multiplier, self.second, self.tag_number) #create network object
     else:
       print("application not found...quitting")
       os._exit(1)
@@ -102,13 +102,13 @@ class Node:
     self.PprzInterface = pprz_interface.Interface(self)
     self.Mobility = mobility.Mobility(self, mobility_model)
 
-    self.Tracer = tracer.Tracer(self, self.tag) #create tracer object 
+    self.Tracer = tracer.Tracer(self, self.fulltag) #create tracer object 
 
   def printinfo(self):
     'Prints general information about the node'
     print()
     print("Node stats")
-    print("nodename:\t\t"+self.tag)
+    print("nodename:\t\t"+self.fulltag)
     print("node role:\t\t"+self.role)
     print("elapsed time: \t\t" + str(self.simulation_seconds)+ " s in virtual time")
     #print("elapsed time: \t\t" + str(self.simulation_tick_seconds)+ " s in real time")

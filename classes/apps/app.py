@@ -25,7 +25,7 @@ class BaseApp:
         self.Node = Node
         self.Node.role = "LISTENER"
         self.tag = tag
-        self.NodeNumber = int(self.Node.tag[-1])
+        self.NodeNumber = self.Node.tag_number
         self.debug = False
         self.multiplier = time_scale
         self.scheduler = BackgroundScheduler()

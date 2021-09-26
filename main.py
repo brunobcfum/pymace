@@ -2,12 +2,13 @@
 
 """
 When studying distributed systems, it is usefull to play with concepts and create prototype applications.
-This main runner aims in helping with the prototyping, so that an application can be created as a class in ./classes/apps
-This code contains the main runner that will run in each node. This is called by the pymace main emulation script,
-but can be called manually when running on real hardware or when running manually for testing.
+This main runner aims in helping with the prototyping, so that an application can be created as a class 
+in ./classes/apps. This code contains the main runner that will run in each node. This is called by the 
+pymace main emulation script, but can be called manually when running on real hardware or when running 
+manually for testing.
 
-Other support classes are also in ./classes to bootstrap some basic funcionality, but are completelly optional since most is
-already covered by better python libraries.
+Other support classes are also in ./classes to bootstrap some basic funcionality, but are completelly 
+optional since most is already covered by better python libraries.
 
 """
 __author__ = "Bruno Chianca Ferreira"
@@ -38,7 +39,7 @@ def main(tag):
         traceback.print_exc()
 
 def _start():
-    random.seed("this_is_enac "+Node.tag); #Seed for random
+    random.seed("this_is_enac "+Node.fulltag); #Seed for random
     prompt_thread.start() #starts prompt
     
     # finally a scheduler that actually works
@@ -127,12 +128,12 @@ def startup():
     """
     s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     try:
-        os.remove("/tmp/pymace.sock."+args.tag)
+        os.remove("/tmp/pymace.sock.node"+str(args.number))
     except OSError:
         #traceback.print_exc()
         pass
     try:
-        s.bind("/tmp/pymace.sock."+args.tag)
+        s.bind("/tmp/pymace.sock.node"+str(args.number))
         s.listen(10)
     except OSError:
         traceback.print_exc()
@@ -148,31 +149,50 @@ def startup():
     conn.close()
     return data
 
+def pritn_header():
+    print("pymace v." + __version__ + " - application test")
+
+def parse_arguments():
+
+    parser = argparse.ArgumentParser(description='Some arguments are obligatory and must follow the correct order as indicated')
+
+    parser.add_argument("tag", help="A tag for the node")
+    parser.add_argument("application", help="Which application you want to use")
+    parser.add_argument("time_scale", help="Time scaler to make the application run faster(<1) or slower(>1)", type=float)
+    parser.add_argument("time_limit", help="Simulation runtime limit in seconds", type=int)
+    #parser.add_argument("mobility", help="The mobility model being use for reporting reasons")
+    parser.add_argument("ip", help="IP protocol: ipv4 or ipv6", choices=['ipv4', 'ipv6'])
+    parser.add_argument("-v", "--verbosity", action="store_true", help="Verbose output")
+    parser.add_argument("-b", "--battery", type=int, help="Initial battery level", default=100)
+    parser.add_argument("-e", "--energy", type=str, help="Energy model", default="stub")
+    parser.add_argument("-r", "--role", type=str, help="Set a role if required by application", default="node")
+    parser.add_argument("-p", "--protocol", type=str, help="Communication protocol", default="sockets")
+    parser.add_argument("-m", "--membership", type=str, help="Membership control", default="local")
+    parser.add_argument("-f", "--fault_detector", type=str, help="Fault Detector", default="simple")
+    parser.add_argument("-o", "--mobility", type=str, help="Mobility Model", default="Random_Walk")
+    parser.add_argument("-n", "--number", type=int, help="Node number", default=0)
+
+    return parser.parse_args()
+
 if __name__ == '__main__':  #for main run the main function. This is only run when this main python file is called, not when imported as a class
     try:
-        print("pymace v." + __version__ + " - testing agent")
+        pritn_header()
+        args = parse_arguments()
 
-        parser = argparse.ArgumentParser(description='Some arguments are obligatory and must follow the correct order as indicated')
-
-        parser.add_argument("tag", help="A tag for the node")
-        parser.add_argument("application", help="Which application you want to use")
-        parser.add_argument("time_scale", help="Time scaler to make the application run faster(<1) or slower(>1)", type=float)
-        parser.add_argument("time_limit", help="Simulation runtime limit in seconds", type=int)
-        #parser.add_argument("mobility", help="The mobility model being use for reporting reasons")
-        parser.add_argument("ip", help="IP protocol: ipv4 or ipv6", choices=['ipv4', 'ipv6'])
-        parser.add_argument("-v", "--verbosity", action="store_true", help="Verbose output")
-        parser.add_argument("-b", "--battery", type=int, help="Initial battery level", default=100)
-        parser.add_argument("-e", "--energy", type=str, help="Energy model", default="stub")
-        parser.add_argument("-r", "--role", type=str, help="Set a role if required by application", default="node")
-        parser.add_argument("-p", "--protocol", type=str, help="Communication protocol", default="sockets")
-        parser.add_argument("-m", "--membership", type=str, help="Membership control", default="local")
-        parser.add_argument("-f", "--fault_detector", type=str, help="Fault Detector", default="simple")
-        parser.add_argument("-o", "--mobility", type=str, help="Mobility Model", default="Random_Walk")
-
-        args = parser.parse_args()
-        #print(args)
-
-        Node = node.Node(args.tag, args.energy, args.mobility, args.application, args.role, args.time_scale, args.battery, args.ip.upper(), args.protocol, args.membership, args.fault_detector) #create node object
+        #defining the node
+        Node = node.Node(args.tag,
+                         args.number,
+                         args.energy, 
+                         args.mobility, 
+                         args.application, 
+                         args.role, 
+                         args.time_scale, 
+                         args.battery, 
+                         args.ip.upper(), 
+                         args.protocol, 
+                         args.membership, 
+                         args.fault_detector) #create node object
+        
         prompt = prompt.Prompt(Node)
         logger = log.Log(Node, args.tag, args.role, args.energy, args.mobility)
         logger.clean_nodedumps(Node)
@@ -192,3 +212,5 @@ if __name__ == '__main__':  #for main run the main function. This is only run wh
     except KeyboardInterrupt:
         logger.print_error("Interrupted by ctrl+c")
         logger.logfile.close()
+    except:
+        traceback.print_exc()

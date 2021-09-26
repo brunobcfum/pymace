@@ -26,7 +26,7 @@ class TERMRunner(Runner):
     self.topology = emulation['term']['topology']
     topology_file = open("./topologies/" + self.topology + ".json","r").read()
     topology = json.loads(topology_file)
-    #self.number_of_nodes = emulation['term']['number_of_nodes']
+    self.number_of_nodes = emulation['term']['number_of_nodes']
     self.number_of_nodes = len(topology)
     self.omnet = True if emulation['term']['omnet'] == "True" else False
     self.core = True if emulation['term']['core'] == "True" else False

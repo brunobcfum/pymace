@@ -111,7 +111,7 @@ class App:
     def _auto_job(self):
         'Loads batch jobs from files. File must correspond to node name'
         try:
-            jobs_file = open("./classes/apps/traffic/job_" + self.Node.tag + ".json","r").read()
+            jobs_file = open("./classes/apps/traffic/job_" + self.Node.fulltag + ".json","r").read()
             jobs_batch = json.loads(jobs_file)
             loop = asyncio.get_event_loop()
             for job in jobs_batch["jobs"]:
@@ -126,8 +126,8 @@ class App:
         'This method opens a UDP socket to receive data. It runs in infinite loop as long as the node is up'
         addrinfo = socket.getaddrinfo(self.bcast_group, None)[1]
         listen_socket = socket.socket(addrinfo[0], socket.SOCK_DGRAM) #UDP
-        port = self.port + int(self.Node.tag[-1])
-        interface='tap' + self.Node.tag[-1]
+        port = self.port + self.Node.tag_number
+        interface='tap' + str(self.Node.tag_number)
         listen_socket.bind(('', self.port))
         self.myip = self._get_ip(interface)
         bat_IP = self._get_ip('bat0')
@@ -145,8 +145,8 @@ class App:
         'This method opens a TCP socket to receive data. It runs in infinite loop as long as the node is up'
         addrinfo = socket.getaddrinfo(self.bcast_group, None)[1]
         listen_socket = socket.socket(addrinfo[0], socket.SOCK_STREAM) #TCP
-        port = self.port + int(self.Node.tag[-1])
-        interface='tap' + self.Node.tag[-1]
+        port = self.port + self.Node.tag_number
+        interface='tap' + str(self.Node.tag_number)
         self.myip = self._get_ip(interface)
         listen_socket.bind(('', self.port))
         listen_socket.listen(1)

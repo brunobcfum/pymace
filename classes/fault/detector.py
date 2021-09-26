@@ -191,7 +191,7 @@ class Simple(FaultDetector):
     echo_sample = random.sample(nodes, self.echo_sample_size)
     while len(echo_sample) > 0:
       for node in echo_sample:
-        msg_id = tools.create_id(time.monotonic_ns(), self.Node.tag)
+        msg_id = tools.create_id(time.monotonic_ns(), self.Node.fulltag)
         response = self.fault_interface.send(node[0], buffer, msg_id)
         try:
           response = pickle.loads(response)
@@ -233,7 +233,7 @@ class Simple(FaultDetector):
 
   def _send_echo(self, faulty_node):
     buffer = self._pack_echo(faulty_node)
-    msg_id = tools.create_id(time.monotonic_ns(), self.Node.tag)
+    msg_id = tools.create_id(time.monotonic_ns(), self.Node.fulltag)
     echo_job = list(self.echo_subscribers)
     tries = 5
     while len(echo_job) > 0 and tries > 0:
@@ -253,21 +253,21 @@ class Simple(FaultDetector):
       tries -= 1
 
   def _pack_echo(self, faulty_node):
-    echo_pack = pickle.dumps([2, faulty_node, self.Node.tag])
+    echo_pack = pickle.dumps([2, faulty_node, self.Node.fulltag])
     return echo_pack
 
   def _pack_echo_subscribe(self):
-    echo_pack_subscribe = pickle.dumps([1, self.Node.tag])
+    echo_pack_subscribe = pickle.dumps([1, self.Node.fulltag])
     return echo_pack_subscribe
 
   def _pack_beacon(self):
     'Method for packing beacon'
-    beacon_pack = pickle.dumps([0, self.Node.tag])
+    beacon_pack = pickle.dumps([0, self.Node.fulltag])
     return beacon_pack
 
   def _send_beacon(self):
     'Method for sending beacon'
-    msg_id = tools.create_id(time.monotonic_ns(), self.Node.tag)
+    msg_id = tools.create_id(time.monotonic_ns(), self.Node.fulltag)
     buffer = self._pack_beacon()
     for node in self.Node.Membership.get_servers():
       if node[0] != self.Node.Network.myip:
@@ -330,7 +330,7 @@ class Simple(FaultDetector):
       if sender_ip != self.Node.Network.myip:
         #Beacon pdu do something
         response = pickle.dumps(['OK'])
-        msg_id = tools.create_id(time.monotonic_ns(), self.Node.tag)
+        msg_id = tools.create_id(time.monotonic_ns(), self.Node.fulltag)
         self.fault_broadcast.respond(response, msg_id, connection)
 
     elif pdu == 1:
@@ -338,9 +338,9 @@ class Simple(FaultDetector):
       if sender_ip not in self.echo_subscribers:
         self.echo_subscribers.append(sender_ip)
       if sender_ip in self.echo_subscribers:
-        self.fault_interface.respond(pickle.dumps(['OK']),tools.create_id(time.monotonic_ns(), self.Node.tag),connection)
+        self.fault_interface.respond(pickle.dumps(['OK']),tools.create_id(time.monotonic_ns(), self.Node.fulltag),connection)
       else:
-        self.fault_interface.respond(pickle.dumps(['NOK']),tools.create_id(time.monotonic_ns(), self.Node.tag),connection)
+        self.fault_interface.respond(pickle.dumps(['NOK']),tools.create_id(time.monotonic_ns(), self.Node.fulltag),connection)
     elif pdu == 2:
       #Echo
       suspect = payload[1]
@@ -360,7 +360,7 @@ class Simple(FaultDetector):
             self.suspect[suspect].append(sender_ip)
         else:
           response = pickle.dumps(['OK'])
-          msg_id = tools.create_id(time.monotonic_ns(), self.Node.tag)
+          msg_id = tools.create_id(time.monotonic_ns(), self.Node.fulltag)
           self.fault_interface.respond(response, msg_id, connection)
           return
       except:
@@ -369,15 +369,15 @@ class Simple(FaultDetector):
       try:  
         if sender_ip in self.suspect[suspect]:
           response = pickle.dumps(['OK'])
-          msg_id = tools.create_id(time.monotonic_ns(), self.Node.tag)
+          msg_id = tools.create_id(time.monotonic_ns(), self.Node.fulltag)
           self.fault_interface.respond(response, msg_id, connection)
         else:
           response = pickle.dumps(['NOK'])
-          msg_id = tools.create_id(time.monotonic_ns(), self.Node.tag)
+          msg_id = tools.create_id(time.monotonic_ns(), self.Node.fulltag)
           self.fault_interface.respond(response, msg_id, connection)
       except KeyError:
         response = pickle.dumps(['NOK'])
-        msg_id = tools.create_id(time.monotonic_ns(), self.Node.tag)
+        msg_id = tools.create_id(time.monotonic_ns(), self.Node.fulltag)
         self.fault_interface.respond(response, msg_id, connection)
     else:
       if self.debug: print("Fault detector -> Got an invalid PDU on fault detector")
@@ -485,7 +485,7 @@ class Fast(FaultDetector):
     echo_sample = random.sample(nodes, self.echo_sample_size)
     while len(echo_sample) > 0:
       for node in echo_sample:
-        msg_id = tools.create_id(time.monotonic_ns(), self.Node.tag)
+        msg_id = tools.create_id(time.monotonic_ns(), self.Node.fulltag)
         response = self.fault_interface.send(node[0], buffer, msg_id)
         try:
           response = pickle.loads(response)
@@ -533,7 +533,7 @@ class Fast(FaultDetector):
 
   def _send_echo(self, faulty_node):
     buffer = self._pack_echo(faulty_node)
-    msg_id = tools.create_id(time.monotonic_ns(), self.Node.tag)
+    msg_id = tools.create_id(time.monotonic_ns(), self.Node.fulltag)
     echo_job = list(self.echo_subscribers)
     tries = 5
     while len(echo_job) > 0 and tries > 0:
@@ -554,21 +554,21 @@ class Fast(FaultDetector):
       tries -= 1
 
   def _pack_echo(self, faulty_node):
-    echo_pack = pickle.dumps([2, faulty_node, self.Node.tag])
+    echo_pack = pickle.dumps([2, faulty_node, self.Node.fulltag])
     return echo_pack
 
   def _pack_echo_subscribe(self):
-    echo_pack_subscribe = pickle.dumps([1, self.Node.tag])
+    echo_pack_subscribe = pickle.dumps([1, self.Node.fulltag])
     return echo_pack_subscribe
 
   def _pack_beacon(self):
     'Method for packing beacon'
-    beacon_pack = pickle.dumps([0, self.Node.tag])
+    beacon_pack = pickle.dumps([0, self.Node.fulltag])
     return beacon_pack
 
   def _send_beacon(self):
     'Method for sending beacon'
-    msg_id = tools.create_id(time.monotonic_ns(), self.Node.tag)
+    msg_id = tools.create_id(time.monotonic_ns(), self.Node.fulltag)
     buffer = self._pack_beacon()
     self.fault_broadcast.send(self.Node.Network.bcast_group, buffer, msg_id)
 
@@ -612,9 +612,9 @@ class Fast(FaultDetector):
       if sender_ip not in self.echo_subscribers:
         self.echo_subscribers.append(sender_ip)
       if sender_ip in self.echo_subscribers:
-        self.fault_interface.respond(pickle.dumps(['OK']),tools.create_id(time.monotonic_ns(), self.Node.tag),connection)
+        self.fault_interface.respond(pickle.dumps(['OK']),tools.create_id(time.monotonic_ns(), self.Node.fulltag),connection)
       else:
-        self.fault_interface.respond(pickle.dumps(['NOK']),tools.create_id(time.monotonic_ns(), self.Node.tag),connection)
+        self.fault_interface.respond(pickle.dumps(['NOK']),tools.create_id(time.monotonic_ns(), self.Node.fulltag),connection)
     elif pdu == 2:
       #Echo
       suspect = payload[1]
@@ -626,7 +626,7 @@ class Fast(FaultDetector):
             self.suspect[suspect].append(sender_ip)
         else:
           response = pickle.dumps(['OK'])
-          msg_id = tools.create_id(time.monotonic_ns(), self.Node.tag)
+          msg_id = tools.create_id(time.monotonic_ns(), self.Node.fulltag)
           self.fault_interface.respond(response, msg_id, connection)
           return
       except:
@@ -634,11 +634,11 @@ class Fast(FaultDetector):
         #self.suspect[suspect] = [sender_ip]
       if sender_ip in self.suspect[suspect]:
         response = pickle.dumps(['OK'])
-        msg_id = tools.create_id(time.monotonic_ns(), self.Node.tag)
+        msg_id = tools.create_id(time.monotonic_ns(), self.Node.fulltag)
         self.fault_interface.respond(response, msg_id, connection)
       else:
         response = pickle.dumps(['NOK'])
-        msg_id = tools.create_id(time.monotonic_ns(), self.Node.tag)
+        msg_id = tools.create_id(time.monotonic_ns(), self.Node.fulltag)
         self.fault_interface.respond(response, msg_id, connection)
     else:
       if self.debug: print("Fault detector -> Got an invalid PDU on fault detector")

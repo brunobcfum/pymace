@@ -24,13 +24,13 @@ from struct import unpack
 
 class App():
 
-  def __init__(self, Node, tag, time_scale, second):
+  def __init__(self, Node, tag, time_scale, second, tag_number):
     'Initializes the properties of the Node object'
     #### Genesis Common 
     random.seed(tag)
     self.Node = Node
     self.tag = tag
-    self.tag_number = int(self.tag[5:])
+    self.tag_number = tag_number
     self.debug = False
     self.multiplier = time_scale
     self.scheduler = BackgroundScheduler()
@@ -112,7 +112,7 @@ class App():
 
   def set_role(self, role):
     self.Node.role = role
-    self.Node.Tracer.add_app_trace('PAXOS->' + self.Node.tag + ' Set as ' + self.Node.role)
+    self.Node.Tracer.add_app_trace('PAXOS->' + self.Node.fulltag + ' Set as ' + self.Node.role)
 
   def set_state(self, state):
     if (state.upper() == 'DISABLED'):
@@ -124,7 +124,7 @@ class App():
       self.udp_listener_thread.start()
       self.tcp_listener_thread.start()
     self.state = state
-    self.Node.Tracer.add_app_trace('PAXOS->' + self.Node.tag + ' Stage changed to ' + self.state)
+    self.Node.Tracer.add_app_trace('PAXOS->' + self.Node.fulltag + ' Stage changed to ' + self.state)
 
 
   ############# Private methods #######################
@@ -150,7 +150,7 @@ class App():
   def _auto_job(self):
     'Loads batch jobs from files. File must correspond to node name'
     try:
-      jobs_file = open("./classes/apps/paxos/job_" + self.Node.tag + ".json","r").read()
+      jobs_file = open("./classes/apps/paxos/job_" + self.Node.fulltag + ".json","r").read()
       jobs_batch = json.loads(jobs_file)
       loop = asyncio.get_event_loop()
       for job in jobs_batch["jobs"]:
@@ -207,8 +207,8 @@ class App():
     'This method opens a UDP socket to receive commands. It runs in infinite loop as long as the node is up'
     addrinfo = socket.getaddrinfo(self.bcast_group, None)[1]
     listen_socket = socket.socket(addrinfo[0], socket.SOCK_DGRAM) #UDP
-    port = self.port + int(self.Node.tag[-1])
-    interface='tap' + self.Node.tag[-1]
+    port = self.port + self.Node.tag_number
+    interface='tap' + str(self.Node.tag_number)
     listen_socket.bind(('', self.port))
     self.myip = self._get_ip(interface)
     while self.Node.lock: #this infinity loop handles the received packets
@@ -223,8 +223,8 @@ class App():
     addrinfo = socket.getaddrinfo(self.bcast_group, None)[1]
     listen_socket = socket.socket(addrinfo[0], socket.SOCK_STREAM) 
     listen_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    port = self.port + int(self.Node.tag[-1])
-    interface='tap' + self.Node.tag[-1]
+    port = self.port + self.Node.tag_number
+    interface='tap' + str(self.Node.tag_number)
     self.myip = self._get_ip(interface)
     listen_socket.bind(('', self.port))
     listen_socket.listen(10)
@@ -243,8 +243,8 @@ class App():
     addrinfo = socket.getaddrinfo(self.bcast_group, None)[1]
     listen_socket = socket.socket(addrinfo[0], socket.SOCK_STREAM) 
     listen_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    port = self.port + int(self.Node.tag[-1])
-    interface='tap' + self.Node.tag[-1]
+    port = self.port + self.Node.tag_number
+    interface='tap' + str(self.Node.tag_number)
     self.myip = self._get_ip(interface)
     listen_socket.bind(('', self.client_port))
     listen_socket.listen(10)

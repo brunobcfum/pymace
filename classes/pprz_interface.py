@@ -11,7 +11,6 @@ from geopy.distance import geodesic
 class Interface():
     def __init__(self, Node):
         self.Node = Node
-        #self.tag_number = int(self.Node.tag[5:])
         self.home = [43.564188, 1.480981]
         self.scale = 2
         self.callbacks = []

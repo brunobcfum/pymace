@@ -24,7 +24,7 @@ class Network():
         self.scheduler = BackgroundScheduler()
         #### NODE ###############################################################################
         self.Node = Node
-        self.NodeNumber = int(self.Node.tag[-1])
+        self.NodeNumber = self.Node.tag_number
         self.visible = [] # our visible neighbours
         self.ever_visible = [] # our visible neighbours
         self.visibility_lost = []
@@ -130,7 +130,7 @@ class Network():
             state = msg.get_field(2)
             processor = msg.get_field(3)
             memory = msg.get_field(4)
-            if (node != self.Node.tag):
+            if (node != self.Node.fulltag):
                 if len(self.visible) > 0: # List no empty, check if already there
                     not_there = 1
                     for element in range(len(self.visible)):
@@ -151,7 +151,7 @@ class Network():
 
     def _createHello(self):
         _hello = message.PprzMessage('genesis', 'HELLO')
-        _hello.set_value_by_name("nodeid", self.Node.tag) # associate values to the different fields of the HELLO message
+        _hello.set_value_by_name("nodeid", self.Node.fulltag) # associate values to the different fields of the HELLO message
         _hello.set_value_by_name("battery", 85)
         _hello.set_value_by_name("state", 1)
         _hello.set_value_by_name("cpu_load", 50)

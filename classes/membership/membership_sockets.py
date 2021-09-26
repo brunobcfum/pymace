@@ -105,7 +105,7 @@ class Local():
     settings = json.loads(settings_file)
     self.interface_stem = settings['interface']
     if self.interface_stem == "tap":
-      interface=self.interface_stem + self.Node.tag[-1]
+      interface=self.interface_stem + str(self.Node.tag_number)
     elif self.interface_stem == "bat":
       interface=self.interface_stem + '0'
     elif self.interface_stem == "eth":
@@ -145,7 +145,7 @@ class Local():
       self.Node.Tracer.add_trace(msg_id+';'+'RECV' + ';' + 'HELLO' + ';' + str(sys.getsizeof(pickleload)) + ';' + str(sender_ip))
       node = payload[1]
       processor = payload[2]
-      if (node != self.Node.tag):
+      if (node != self.Node.fulltag):
         if len(self.visible) > 0: #list no empty, check if already there
           not_there = 1
           for element in range(len(self.visible)):
@@ -177,10 +177,10 @@ class Local():
 
   def _createHello(self):
     processor = self.Node.load
-    helloPack = pickle.dumps([0, self.Node.tag, processor])
+    helloPack = pickle.dumps([0, self.Node.fulltag, processor])
     buffer = bytearray()
     buffer.append(0)
-    buffer.extend(map(ord, self.Node.tag))
+    buffer.extend(map(ord, self.Node.fulltag))
     if len(buffer) < 11:
       left = 11 - len(buffer)
       for i in range(left):
@@ -364,7 +364,7 @@ class Global():
     settings = json.loads(settings_file)
     self.interface_stem = settings['interface']
     if self.interface_stem == "tap":
-      interface=self.interface_stem + self.Node.tag[-1]
+      interface=self.interface_stem + str(self.Node.tag_number)
     elif self.interface_stem == "bat":
       interface=self.interface_stem + '0'
     elif self.interface_stem == "eth":
@@ -399,7 +399,7 @@ class DBRB():
   def __init__(self, Node, ip ):
     self.Node = Node
     self.ip = ip #ipv4 or ipv6
-    self.tag = Node.tag
+    self.tag = Node.fulltag
     ##### Compatibility
     self.visible = [] #this is here for compatibility and is equivalente to CV in DBRB
     self.messages = []
@@ -481,7 +481,7 @@ class DBRB():
     return buffer
 
   def _pack_reconfig(self):
-    reconfig_packet = pickle.dumps([2, self.Node.tag])
+    reconfig_packet = pickle.dumps([2, self.Node.fulltag])
     msg_id = zlib.crc32(str(int(time.time()*1000)).encode())
     signature = self._sign(reconfig_packet)
     buffer = pickle.dumps([signature, reconfig_packet])
@@ -500,7 +500,7 @@ class DBRB():
     if self.reqlock == True:
       return
     if self.state == 'OUT':
-      req_packet = pickle.dumps([1, self.Node.tag])
+      req_packet = pickle.dumps([1, self.Node.fulltag])
       msg_id = zlib.crc32(str(int(time.time()*1000)).encode())
       signature = self._sign(req_packet)
       buffer = pickle.dumps([signature, req_packet])
@@ -540,7 +540,7 @@ class DBRB():
 
   def _discover(self):
     #onion discover packet
-    discover_packet = pickle.dumps(['DISCOVER_PDU', self.Node.tag])
+    discover_packet = pickle.dumps(['DISCOVER_PDU', self.Node.fulltag])
     msg_id = self._create_id()
     signature = self._sign(discover_packet)
     buffer = pickle.dumps([signature, discover_packet])

@@ -25,13 +25,13 @@ from struct import unpack
 
 class App():
 
-  def __init__(self, Node, tag, time_scale, second):
+  def __init__(self, Node, tag, time_scale, second, tag_number):
     'Initializes the properties of the Node object'
     #### Genesis Common 
     random.seed(tag)
     self.Node = Node
     self.tag = tag
-    self.tag_number = int(self.tag[5:])
+    self.tag_number = tag_number
     self.debug = False
     self.multiplier = time_scale
     self.scheduler = BackgroundScheduler()
@@ -155,14 +155,14 @@ class App():
 
   def set_role(self, role):
     self.Node.role = role
-    self.Node.Tracer.add_app_trace('PAXOS->' + self.Node.tag + ' Set as ' + self.Node.role)
+    self.Node.Tracer.add_app_trace('PAXOS->' + self.Node.fulltag + ' Set as ' + self.Node.role)
 
   def get_state(self):
     return self.state
 
   def set_state(self, state):
     self.state = state
-    self.Node.Tracer.add_app_trace('PAXOS->' + self.Node.tag + ' Stage changed to ' + self.state)
+    self.Node.Tracer.add_app_trace('PAXOS->' + self.Node.fulltag + ' Stage changed to ' + self.state)
   
   def get_seek_head(self):
     return self.seek_head
@@ -186,7 +186,6 @@ class App():
   ############# Private methods #######################
 
   def _setup(self):
-    #interface='bat' + self.Node.tag[-1]
     self.myip = self.Node.Network.myip
     settings_file = open("./classes/apps/multipaxos/settings.json","r").read()
     settings = json.loads(settings_file)
@@ -201,7 +200,7 @@ class App():
   def _auto_job(self):
     'Loads batch jobs from files. File must correspond to node name'
     try:
-      jobs_file = open("./classes/apps/multipaxos/job_" + self.Node.tag + ".json","r").read()
+      jobs_file = open("./classes/apps/multipaxos/job_" + self.Node.fulltag + ".json","r").read()
       jobs_batch = json.loads(jobs_file)
       loop = asyncio.get_event_loop()
       for job in jobs_batch["jobs"]:

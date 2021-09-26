@@ -22,15 +22,16 @@ import pprint
 
 class Runner():
 
-  def __init__(self, emulation):
+  def __init__(self, emulation, omnet_settings, localdir):
     """
     Runner class
     """
-    self.setup(emulation)
+    self.localdir = localdir
+    self.setup(emulation, omnet_settings)
     self.nodes_digest = {}
     self.iosocket_semaphore = False
 
-  def setup(self, emulation):
+  def setup(self, emulation, omnet_settings):
     self.scenario = emulation['scenario']
     self.tagbase = emulation['settings']['tagbase']
     self.application = emulation['settings']['application']
@@ -52,7 +53,7 @@ class Runner():
     self.disks = True if emulation['settings']['disks'] == "True" else False
     self.dump = True if emulation['settings']['dump'] == "True" else False
     self.start_delay = emulation['settings']['start_delay']
-    self.omnet_settings = emulation['omnet_settings']
+    self.omnet_settings = omnet_settings
     self.Mobility = mobility.Mobility(self, self.mobility_model)
     self.nodes_to_start = list(range(self.number_of_nodes))
 
@@ -94,7 +95,7 @@ class Runner():
 
     node_options=[]
     for i in range(0,self.number_of_nodes):
-        node_options.append(NodeOptions(name='drone'+str(i)))
+        node_options.append(NodeOptions(name='node'+str(i)))
 
     #nodes' position based on topology file
     topo = topo_from_file
@@ -361,11 +362,20 @@ class Runner():
     for i in range(0,self.number_of_nodes):
       shell = self.session.get_node(i+1, CoreNode).termcmdstring(sh="/bin/bash")
       command = "export PYTHONPATH=/home/bruno/Documents/bruno-onera-enac-doctorate/software/pprzlink/lib/v2.0/python && "
-      command += "cd /opt/Projetos/pymace && "
-      command += "./main.py drone"+ str(i) + " " + self.application + " " 
-      command += str(self.time_scale) + " " + str(self.time_limit) + " -p " 
-      command += self.network  + " ipv4 -b 100 -r node"
+      command += "cd " + self.localdir + " && "
+      command += "./main.py "
+      command += self.tagbase
+      #command += str(i)
+      command += " "
+      command += self.application
+      command += " " 
+      command += str(self.time_scale)
+      command += " "
+      command += str(self.time_limit)
+      command += " -p " + self.network
+      command += " ipv4 -b 100 -r node"
       command += " -m " + self.membership
+      command += " -n " + str(i)
       command += " -f " + self.fault_detector
       command += " -o " + self.mobility_model
       shell += " -c '" + command + "'"
@@ -384,7 +394,7 @@ class Runner():
     # They receive a time when they should start, so it that they start very close to eachother
     for node in self.nodes_to_start:
       s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-      s.connect("/tmp/pymace.sock.drone"+str(node))
+      s.connect("/tmp/pymace.sock.node"+str(node))
       s.send(str(time_to_start).encode())
       data = s.recv(10)
       s.close()

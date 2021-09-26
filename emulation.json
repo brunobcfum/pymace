@@ -1,10 +1,10 @@
 {
-  "emulations": [
+  "applications": [
     {
       "repetitions": 1,
       "scenario": "symmetrical_static",
       "settings": {
-        "tagbase": "drone",
+        "tagbase": "uas",
         "omnet": "False",
         "core": "True",
         "disks": "False",
@@ -24,12 +24,6 @@
         "fault_detector": "fast",
         "role": "node",
         "start_delay": 5
-      },
-      "omnet_settings": {
-        "omnet_include_path" : "/opt/omnet/inet/src:./topologies/NewTest/simulations",
-        "symemtrical_static" : "./topologies/NewTest/simulations/omnetpp.ini",
-        "symemtrical_mob"    : "./topologies/NewTest/simulations/omnetpp.ini",
-        "ini_file"           : "./topologies/NewTest/simulations/nonmob.ini"
       }
     }
   ],
@@ -63,7 +57,8 @@
     "disks": "True",
     "dump": "False",
     "topology": "fullmeshWobn",
-    "mobility": "none"
+    "mobility": "random_waypoint",
+    "number_of_nodes": 2
   },
   "app": {
     "appdir": "",

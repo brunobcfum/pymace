@@ -17,12 +17,13 @@ class Prompt:
     def __init__(self, node):
         self.lock=True
         self.history = deque([],100) #logbook of all messages received
+        self.prompt_str = "#>"
 
     def prompt(self,node):
         'Simple command prompt * Maybe can be changed to use a prompt lib for better functionallity'
         try:
             while self.lock==True:
-                inp = input(node.prompt_str)
+                inp = input(node.fulltag + self.prompt_str)
                 command = inp.split()
                 self.history.append(command)
                 try:

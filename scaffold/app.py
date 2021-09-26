@@ -15,13 +15,13 @@ from classes import prompt
 
 class App():
 
-    def __init__(self, Node, tag, time_scale, second):
+    def __init__(self, Node, tag, time_scale, second, tag_number):
         'Initializes the properties of the Node object'
         #### Genesis Common 
         random.seed(tag)
         self.Node = Node
         self.tag = tag
-        self.tag_number = int(self.tag[5:])
+        self.tag_number = tag_number
         self.debug = False
         self.multiplier = time_scale
         self.scheduler = BackgroundScheduler()
@@ -62,7 +62,7 @@ class App():
     def _auto_job(self):
         'Loads batch jobs from files. File must correspond to node name'
         try:
-            jobs_file = open("./classes/apps/myapp/job_" + self.Node.tag + ".json","r").read()
+            jobs_file = open("./classes/apps/myapp/job_" + self.Node.fulltag + ".json","r").read()
             jobs_batch = json.loads(jobs_file)
             loop = asyncio.get_event_loop()
             for job in jobs_batch["jobs"]:

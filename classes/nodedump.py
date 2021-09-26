@@ -7,11 +7,11 @@ class Dump():
                 os.makedirs("node_dumps")
             except:
                 pass
-        dumpfile = open("node_dumps/" + node.tag + ".json","w")
+        dumpfile = open("node_dumps/" + node.fulltag + ".json","w")
         self.node_info(dumpfile, node)
     
     def node_info(self, dumpfile, node):
-        data = json.dumps({'nodename':node.tag,
+        data = json.dumps({'nodename':node.fulltag,
                             #'node mode':node.Membership.mode,
                             #'battery energy':node.Battery.battery_energy,
                             #'battery percent':node.Battery.battery_percent,
@@ -37,7 +37,7 @@ class Neighbours():
                 os.makedirs("neighbours")
             except:
                 pass
-        dumpfile = open("neighbours/" + node.tag + ".json","w")
+        dumpfile = open("neighbours/" + node.fulltag + ".json","w")
         self.dump(dumpfile, node)
     
     def dump(self, dumpfile, node):

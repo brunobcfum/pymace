@@ -46,7 +46,7 @@ class Bus():
   def emmit(self, data):
     bus = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     bus.settimeout(1)
-    bus.connect("/tmp/drone.sock."+self.Node.tag)
+    bus.connect("/tmp/drone.sock."+self.Node.fulltag)
     payload = pickle.dumps(data)
     length = len(payload)
     bus.sendall(struct.pack('!I', length))
@@ -67,12 +67,12 @@ class Bus():
     #this section is a synchronizer so that all nodes can start ROUGHLY at the same time
     bus_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     try:
-      os.remove("/tmp/drone.sock."+self.Node.tag)
+      os.remove("/tmp/drone.sock."+self.Node.fulltag)
     except OSError:
       #traceback.print_exc()
       pass
     try:
-      bus_socket.bind("/tmp/drone.sock."+self.Node.tag)
+      bus_socket.bind("/tmp/drone.sock."+self.Node.fulltag)
       bus_socket.listen(10000)
     except OSError:
       traceback.print_exc()

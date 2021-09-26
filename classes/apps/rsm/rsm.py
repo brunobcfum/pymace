@@ -29,7 +29,7 @@ from collections import deque
 
 class App:
 
-  def __init__(self, Node, tag, time_scale, second):
+  def __init__(self, Node, tag, time_scale, second, tag_number):
     'Initializes the properties of the application object'
     random.seed(tag)
     self.tag = tag
@@ -53,7 +53,7 @@ class App:
     self.job_timeout = 10
     ##################### END OF DEFAULT SETTINGS ###########################################################
     self._setup()
-    self.consensus = multipaxos.App(self.Node, tag, self.multiplier, self.second)
+    self.consensus = multipaxos.App(self.Node, tag, self.multiplier, self.second, tag_number)
     self.ranking = self.consensus.tag_number
     self.client_interface = network_sockets.TcpPersistent(self._packet_handler, debug=False, port=self.client_port, interface='')
     self.rsm_interface = network_sockets.TcpPersistent(self._packet_handler, debug=False, port=self.rsm_port, interface='')
@@ -294,7 +294,7 @@ class App:
   def _auto_job(self):
     'Loads batch jobs from files. File must correspond to node name'
     try:
-      jobs_file = open("./classes/apps/rsm/job_" + self.Node.tag + ".json","r").read()
+      jobs_file = open("./classes/apps/rsm/job_" + self.Node.fulltag + ".json","r").read()
       jobs_batch = json.loads(jobs_file)
       if len(jobs_batch["jobs"]) == 0:
         return

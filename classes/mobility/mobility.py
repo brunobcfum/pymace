@@ -12,7 +12,7 @@ class Mobility():
     self.mobility_model = model
     self.core_nodes = []
     self.scheduler = BackgroundScheduler()
-    self.scheduler.add_job(self.mobility_update, 'interval', seconds=0.2, id='update')
+    self.scheduler.add_job(self.mobility_update, 'interval', seconds=0.5, id='update')
     self.x_dim = 220
     self.y_dim = 220
     self.velocity_lower = 0.1

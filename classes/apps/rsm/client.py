@@ -51,7 +51,8 @@ class RSMClient:
     end = time.monotonic_ns()
     self.total_time = (end - start) / 1000000
     self.print_results()
-    self.export_results(tag)
+    if (self.times * self.clients > 1):
+      self.export_results(tag)
     #### NODE ###############################################################################
 # END OF DEFAULT SETTINGS ###########################################################
 
@@ -106,12 +107,16 @@ class RSMClient:
     pass
 
   def print_results(self):
-    try:
       print("Results")
       print("####################################################")
       print()
       print("Succesful: " + str(self.read_results[0]))
       print("Failed: " + str(self.read_results[1]))
+      if (self.times * self.clients > 1):
+        self.print_statistics()
+
+  def print_statistics(self):
+    try:
       print("Mean latency: " + str(statistics.mean(self.read_timings))     + " ms")
       print("Median latency: " + str(statistics.median(self.read_timings)) + " ms")
       print("Std dev latency: " + str(statistics.stdev(self.read_timings)) + " ms")

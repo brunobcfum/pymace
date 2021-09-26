@@ -1,0 +1,58 @@
+{
+    "settings": {
+        "omnet": "False",
+        "core": "True",
+        "dump": "False",
+        "number_of_nodes": 9,
+        "start_delay": 5,
+        "username": "bruno"
+    },
+    "fixed_core_settings": {
+        "radius": "250",
+        "bandwidth": "433300000",
+        "delay": "100",
+        "jitter": "0",
+        "error": "1",
+        "emane": "False"
+    },
+    "mobile_core_settings": {
+        "radius": "90",
+        "bandwidth": "54000000",
+        "delay": "500",
+        "jitter": "2",
+        "error": "2",
+        "emane": "False"
+    },
+    "nodes": [
+        {
+            "settings": {
+                "_id": 0,
+                "x": 101.5,
+                "y": 102,
+                "fill": "#1100FF",
+                "stroke": "black",
+                "strokeWidth": 0,
+                "shadowBlur": 1,
+                "shadowOffset": {
+                  "x": 2,
+                  "y": 2
+                },
+                "shadowOpacity": 0.2,
+                "opacity": 0.8,
+                "draggable": true,
+                "radius": 6,
+                "shadowColor": "black",
+                "type": "node",
+                "range": 90
+            },
+            "function" : "terminal",
+            "type": "UAS",
+            "extra": {
+                "disks": "False",
+                "dump": "False",
+                "mobility": "none"
+            }
+        }
+    ]   
+}
+  

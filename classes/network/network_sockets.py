@@ -59,7 +59,7 @@ class Network():
         settings = json.loads(settings_file)
         self.interface_stem = settings['interface']
         if self.interface_stem == "tap":
-            interface=self.interface_stem + self.Node.tag[-1]
+            interface=self.interface_stem + str(self.Node.tag_number)
         elif self.interface_stem == "bat":
             interface=self.interface_stem + '0'
         elif self.interface_stem == "eth":
