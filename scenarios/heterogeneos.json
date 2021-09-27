@@ -7,6 +7,32 @@
         "start_delay": 5,
         "username": "bruno"
     },
+    "networks": [
+        {
+            "name" : "fixed",
+            "prefix" : "10.0.0.0/24",
+            "settings": {
+                "radius": "250",
+                "bandwidth": "433300000",
+                "delay": "100",
+                "jitter": "0",
+                "error": "1",
+                "emane": "False"
+            }
+        },
+        {
+            "name" : "mobile",
+            "prefix" : "12.0.0.0/24",
+            "settings": {
+                "radius": "90",
+                "bandwidth": "54000000",
+                "delay": "500",
+                "jitter": "2",
+                "error": "2",
+                "emane": "False"
+            }
+        }
+    ],
     "fixed_core_settings": {
         "radius": "250",
         "bandwidth": "433300000",
@@ -25,6 +51,7 @@
     },
     "nodes": [
         {
+            "name" : "tower1",
             "settings": {
                 "_id": 0,
                 "x": 101.5,
@@ -50,7 +77,8 @@
             "extra": {
                 "disks": "False",
                 "dump": "False",
-                "mobility": "none"
+                "mobility": "none",
+                "network": "fixed"
             }
         }
     ]   

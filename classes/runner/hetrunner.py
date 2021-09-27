@@ -9,6 +9,7 @@ __email__ = "brunobcf@gmail.com"
 
 
 import traceback, os, logging, time, subprocess, threading, sys
+from typing import Sequence
 from classes.runner.runner import Runner
 
 from .. import iosocket
@@ -30,6 +31,7 @@ from classes.mobility import mobility
 from classes.runner.bus import Bus
 
 from classes.nodes.fixed_node import FixedNode
+from classes.nodes.scenario import Scenario
 
 class HETRunner(Runner):
 
@@ -42,123 +44,78 @@ class HETRunner(Runner):
     self.node_options_mobile = []
     self.core_nodes_fixed = []
     self.core_nodes_mobile = []
-    self.nodes_padding = 0 
+    self.prefixe_fixed = "10.0.0.0/24"
+    self.prefixe_mobile = "12.0.0.0/24"
     self.setup(scenario)
 
   def setup(self, scenario):
-    #self.topology = scenario['setup']['topology']
-    self.number_of_nodes = scenario['settings']['number_of_nodes']
-    self.dump = True if scenario['settings']['dump'] == "True" else False
-    self.nodes = scenario['nodes']
-    self.fixed_core_settings = self.get_fixed_settings(scenario)
-    self.mobile_core_settings = self.get_mobile_settings(scenario)
+    self.scenario = Scenario(scenario)
+
     self.Mobility = mobility.Mobility(self, 'random_walk')
-    self._setup_nodes(self.nodes)
 
-    #self.serial = True if scenario['riot']['serial'] == "True" else False
-    #self.disks = True if scenario['riot']['disks'] == "True" else False
-    #self.dump = True if scenario['riot']['dump'] == "True" else False
-    #self.mobility_model = scenario['riot']['mobility']
-    #self.app_dir = scenario['riot']['app_dir']
-    #self.app = scenario['riot']['app']
-    #self.Mobility = mobility.Mobility(self, self.mobility_model)
-
-  def _setup_nodes(self, nodes):
-    for node in nodes:
-      try:
-        #print(node['settings']['x'])
-        if (node['extra']['mobility'] != "none"):
-          self.node_options_mobile.append(NodeOptions(name=node['settings']['type'] + str(node['settings']['_id'])))
-          self.node_options_mobile[len(self.node_options_mobile) - 1].set_position(node['settings']['x'], node['settings']['y'])
-        else:
-          self.node_options_fixed.append(NodeOptions(name=node['settings']['type'] + str(node['settings']['_id'])))
-          self.node_options_fixed[len(self.node_options_fixed) - 1].set_position(node['settings']['x'], node['settings']['y'])
-          self.fixed_nodes.append(FixedNode(
-                 coordinates = [node['settings']['x'], node['settings']['y'], 0],
-                 tagname = node['settings']['type'] + str(node['settings']['_id']),
-                 tag_number = node['settings']['_id'],
-                 node_type = node['type'],
-                 function = node['function']))
-          #print(self.fixed_nodes)
-      except:
-        #traceback.print_exc()
-        print("Missing settings key in nodes. Aborting simulation.")
-    #sys.exit(1)
 
   def start(self):
     #pass
     self.run()
 
-  def get_fixed_settings(self, scenario):
-    settings = {
-      "range": scenario['fixed_core_settings']['radius'],
-      "bandwidth": scenario['fixed_core_settings']['bandwidth'],
-      "delay": scenario['fixed_core_settings']['delay'],
-      "jitter": scenario['fixed_core_settings']['jitter'],
-      "error": scenario['fixed_core_settings']['error']
-    }
-    return settings
-
-  def get_mobile_settings(self, scenario):
-    settings = {
-      "range": scenario['mobile_core_settings']['radius'],
-      "bandwidth": scenario['mobile_core_settings']['bandwidth'],
-      "delay": scenario['mobile_core_settings']['delay'],
-      "jitter": scenario['mobile_core_settings']['jitter'],
-      "error": scenario['mobile_core_settings']['error']
-    }
-    return settings
 
   def setup_core(self):
     os.system("core-cleanup")
-    prefixes = IpPrefixes("10.0.0.0/24")
-    prefixes_mobile = IpPrefixes("12.0.0.0/24")
+    prefixes = IpPrefixes(self.prefixe_fixed)
+    prefixes_mobile = IpPrefixes(self.prefixe_mobile)
     self.coreemu = CoreEmu()
     self.session = self.coreemu.create_session()
     # must be in configuration state for nodes to start, when using "node_add" below
     self.session.set_state(EventTypes.CONFIGURATION_STATE)
-    fixed_wlan_options = NodeOptions(name='uwlan', x=200, y=200)
-    mobile_wlan_options = NodeOptions(name='mwlan', x=0, y=0)
-    self.fixed_wlan = self.session.add_node(WlanNode,options=fixed_wlan_options, _id = 1)
-    self.nodes_padding += 1 
-    self.mobile_wlan = self.session.add_node(WlanNode,options=mobile_wlan_options, _id = 2 )
-    self.nodes_padding += 1 
+
+    #Called mobility by CORE, by it is actually more like the radio model
     self.modelname = BasicRangeModel.name
-    self.session.mobility.set_model_config(self.fixed_wlan.id, BasicRangeModel.name,self.fixed_core_settings)
-    self.session.mobility.set_model_config(self.mobile_wlan.id, BasicRangeModel.name,self.mobile_core_settings)
 
-    for node_opt in self.node_options_fixed:
-      self.core_nodes_fixed.append(self.session.add_node(CoreNode, options=node_opt, _id=self.nodes_padding+1))
-      self.nodes_padding +=1
 
-    for node_opt in self.node_options_mobile:
-      self.core_nodes_mobile.append(self.session.add_node(CoreNode, options=node_opt))
+    self.scenario.setup_nodes(self.session)
 
-    for node in self.core_nodes_fixed:
-      interface = prefixes.create_iface(node)
-      interface2 = prefixes_mobile.create_iface(node)
-      self.session.add_link(node.id, self.fixed_wlan.id, iface1_data=interface)
-      self.session.add_link(node.id, self.mobile_wlan.id, iface1_data=interface2)
+    #for node_opt in self.scenario.get_fixed_node_opts():
+    #  self.core_nodes_fixed.append(self.session.add_node(CoreNode, options=node_opt))
 
-    for node in self.core_nodes_mobile:
-      interface = prefixes_mobile.create_iface(node)
-      self.session.add_link(node.id, self.mobile_wlan.id, iface1_data=interface)
+    #for node_opt in self.node_options_mobile:
+    #  self.core_nodes_mobile.append(self.session.add_node(CoreNode, options=node_opt))
 
-    self.Mobility.register_core_nodes(self.core_nodes_mobile)
+    self.scenario.setup_wlans(self.session)
+    self.scenario.setup_links(self.session)
+    
+
+    #for node in self.core_nodes_fixed:
+    #  interface = prefixes.create_iface(node)
+    #  interface2 = prefixes_mobile.create_iface(node)
+    #  self.session.add_link(node.id, self.scenario.get_fixed_wlan().id, iface1_data=interface)
+    #  self.session.add_link(node.id, self.scenario.get_mobile_wlan().id, iface1_data=interface2)
+#
+    #for node in self.core_nodes_mobile:
+    #  interface = prefixes_mobile.create_iface(node)
+    #  self.session.add_link(node.id, self.scenario.get_mobile_wlan().id, iface1_data=interface)
+
+    #self.Mobility.register_core_nodes(self.core_nodes_mobile)
     #self.Mobility.start()
     self.session.instantiate()
+    self.session.write_nodes()
     #self.coreemu.shutdown()
     
 
   def add_one_node(self, node):
     pass
 
-  def configure_batman(self):
+  def configure_batman(self, network_prefix, list_of_nodes):
+    #Configure Batman only on fixed network
+    network_prefix = network_prefix.split("/")[0]
+    network_prefix = network_prefix.split(".")
+    network_prefix[2] = str(int(network_prefix[2]) + 1)
+    network_prefix = '.'.join(network_prefix)
     process = []
-    for i in range(0,self.number_of_nodes):
-      shell = self.session.get_node(i+1, CoreNode).termcmdstring(sh="/bin/bash")
+    ###TODO Change this to do only on fixed nodes
+    for node in list_of_nodes:
+      shell = self.session.get_node(node, CoreNode).termcmdstring(sh="/bin/bash")
       #command = "ip link set eth0 address 0A:AA:00:00:00:" + '{:02x}'.format(i+2) +  " && batctl if add eth0 && ip link set up bat0 && ip addr add 10.0.1." +str(i+2) + "/255.255.255.0 broadcast 10.0.1.255 dev bat0"
-      command = "modprobe batman-adv && batctl ra BATMAN_IV && batctl if add eth0 && ip link set up bat0 && ip addr add 10.0.1." +str(i+1) + "/255.255.255.0 broadcast 10.0.1.255 dev bat0"
+      command = "modprobe batman-adv && batctl ra BATMAN_IV && batctl if add eth0 && ip link set up bat0 && ip addr add " + network_prefix +str(node) + "/255.255.255.0 broadcast 10.0.1.255 dev bat0"
       shell += " -c '" + command + "'"
       node = subprocess.Popen([
                     "xterm",
@@ -168,19 +125,21 @@ class HETRunner(Runner):
 
   def server_thread(self):
     'Starts a thread with the Socket.io instance that will serve the HMI'
-    self.iosocket = iosocket.Socket(self.core_nodes_mobile, self.mobile_wlan, self.session, self.modelname, self.nodes_digest, self.iosocket_semaphore, self)
+    pass
+    #self.iosocket = iosocket.Socket(self.core_nodes_mobile, self.mobile_wlan, self.session, self.modelname, self.nodes_digest, self.iosocket_semaphore, self)
 
   def run(self):
     """
     Runs the emulation of a heterogeneous scenario
     """
 
-    #start core
+    #Setup and Start core
     self.setup_core()
-    self.configure_batman()
+    #Setup Batman only for fixed network
+    #self.configure_batman(self.prefixe_fixed, [3])
 
     #start dumps
-    if self.dump:
+    if self.scenario.dump:
       #get simdir
       simdir = str(time.localtime().tm_year) + "_" + str(time.localtime().tm_mon) + "_" + str(time.localtime().tm_mday) + "_" + str(time.localtime().tm_hour) + "_" + str(time.localtime().tm_min)
       self.tcpdump_core(self.number_of_nodes, "./reports/" + simdir + "/tracer")
@@ -189,7 +148,7 @@ class HETRunner(Runner):
     sthread = threading.Thread(target=self.server_thread, args=())
     sthread.start()
 
-    terminals = self.start_terminal(1)
+    terminals = self.start_terminal(self.session, 1)
   
     #self.configure_bridge()
     #self.configure_serial(self.number_of_nodes)
@@ -210,7 +169,7 @@ class HETRunner(Runner):
     print("Starting Terminals in CORE")
     nodes = {}
     for i in range(0,number_of_nodes):
-      shell = session.get_node(i+3, CoreNode).termcmdstring(sh="/bin/bash")
+      shell = session.get_node(i+1, CoreNode).termcmdstring(sh="/bin/bash")
       command = ""
       #shell += " -c '" + command + "'"
       node = subprocess.Popen([
