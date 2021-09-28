@@ -12,6 +12,7 @@ class GenericNode():
   node_type: str = None
   function: str = None
   max_position: List[float] = field(default_factory=lambda: [5000,5000,5000])
+  mobile: bool = False
 
 
   #PRIVATE

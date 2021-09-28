@@ -9,7 +9,7 @@ from multiprocessing import Process
 
 motes_global = []
 class Socket(flask.Flask):
-    def __init__(self, nodes, wlan, session, modelname, digest, semaphore, pymace):
+    def __init__(self, nodes, wlan, session, modelname, digest, semaphore, pymace, callback):
         app = flask.Flask(__name__)
         self.Pymace = pymace
         self.socketio = SocketIO(app, cors_allowed_origins="*", engineio_logger=False, logger=False)
@@ -28,6 +28,7 @@ class Socket(flask.Flask):
         self.wlan = wlan
         self.session = session
         self.modelname = modelname
+        self.pymace_callback = callback
         #self.rw = random_waypoint(len(self.nodes), dimensions=(220, 220), velocity=(0.5, 2.0), wt_max=1.0)
         for node in self.nodes:
             self.initial_nodes[node.id] = node.getposition()
@@ -47,6 +48,7 @@ class Socket(flask.Flask):
         def stop():
             print('Shutting down web server')
             try:
+                self.Pymace.running = False
                 self.socketio.stop()
             except:
                 pass
@@ -124,6 +126,7 @@ class Socket(flask.Flask):
                 nodedata = {}
                 nodedata['position'] = node.getposition()
                 nodedata['id'] = node.id
+                nodedata['range'] = 250
                 data['nodes'].append(nodedata)
                 it += 1
             try:
@@ -137,4 +140,8 @@ class Socket(flask.Flask):
                 pass
             time.sleep(0.04)
             self.socketio.emit('nodes', {'data': data}, namespace='/sim')
+
+    def add_node(self, node):
+        print(node)
+        self.nodes.append(node)
 

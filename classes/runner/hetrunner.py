@@ -46,18 +46,19 @@ class HETRunner(Runner):
     self.core_nodes_mobile = []
     self.prefixe_fixed = "10.0.0.0/24"
     self.prefixe_mobile = "12.0.0.0/24"
+    self.running = True
     self.setup(scenario)
 
   def setup(self, scenario):
     self.scenario = Scenario(scenario)
+    self.Mobility = mobility.Mobility(self, 'RANDOM_DIRECTION')
 
-    self.Mobility = mobility.Mobility(self, 'random_walk')
-
+  def callback(self):
+    print("hello")
 
   def start(self):
     #pass
     self.run()
-
 
   def setup_core(self):
     os.system("core-cleanup")
@@ -71,36 +72,20 @@ class HETRunner(Runner):
     #Called mobility by CORE, by it is actually more like the radio model
     self.modelname = BasicRangeModel.name
 
-
     self.scenario.setup_nodes(self.session)
-
-    #for node_opt in self.scenario.get_fixed_node_opts():
-    #  self.core_nodes_fixed.append(self.session.add_node(CoreNode, options=node_opt))
-
-    #for node_opt in self.node_options_mobile:
-    #  self.core_nodes_mobile.append(self.session.add_node(CoreNode, options=node_opt))
-
     self.scenario.setup_wlans(self.session)
     self.scenario.setup_links(self.session)
-    
 
-    #for node in self.core_nodes_fixed:
-    #  interface = prefixes.create_iface(node)
-    #  interface2 = prefixes_mobile.create_iface(node)
-    #  self.session.add_link(node.id, self.scenario.get_fixed_wlan().id, iface1_data=interface)
-    #  self.session.add_link(node.id, self.scenario.get_mobile_wlan().id, iface1_data=interface2)
-#
-    #for node in self.core_nodes_mobile:
-    #  interface = prefixes_mobile.create_iface(node)
-    #  self.session.add_link(node.id, self.scenario.get_mobile_wlan().id, iface1_data=interface)
-
-    #self.Mobility.register_core_nodes(self.core_nodes_mobile)
-    #self.Mobility.start()
+    list_mobile_nodes = []
+    core_nodes = self.scenario.get_core_nodes()
+    for network in core_nodes:
+      if network == "mobile":
+        self.Mobility.register_core_nodes(core_nodes[network])
+    self.Mobility.start()
     self.session.instantiate()
     self.session.write_nodes()
     #self.coreemu.shutdown()
     
-
   def add_one_node(self, node):
     pass
 
@@ -125,8 +110,14 @@ class HETRunner(Runner):
 
   def server_thread(self):
     'Starts a thread with the Socket.io instance that will serve the HMI'
-    pass
-    #self.iosocket = iosocket.Socket(self.core_nodes_mobile, self.mobile_wlan, self.session, self.modelname, self.nodes_digest, self.iosocket_semaphore, self)
+    mobile_lan = self.scenario.get_wlans()['mobile']
+    mobile_core_nodes = self.scenario.get_core_nodes()['mobile']
+    fixed_lan = self.scenario.get_wlans()['fixed']
+    fixed_core_nodes = self.scenario.get_core_nodes()['fixed']
+    nodes = mobile_core_nodes + fixed_core_nodes
+    #setattr(self, "iosocket", iosocket.Socket([], mobile_lan, self.session, self.modelname, self.nodes_digest, self.iosocket_semaphore, self))
+    self.iosocket = iosocket.Socket(nodes, mobile_lan, self.session, self.modelname, self.nodes_digest, self.iosocket_semaphore, self, self.callback)
+    #self.iosocket_fixed = iosocket.Socket(fixed_core_nodes, mobile_lan, self.session, self.modelname, self.nodes_digest, self.iosocket_semaphore, self)
 
   def run(self):
     """
@@ -135,8 +126,6 @@ class HETRunner(Runner):
 
     #Setup and Start core
     self.setup_core()
-    #Setup Batman only for fixed network
-    #self.configure_batman(self.prefixe_fixed, [3])
 
     #start dumps
     if self.scenario.dump:
@@ -144,73 +133,20 @@ class HETRunner(Runner):
       simdir = str(time.localtime().tm_year) + "_" + str(time.localtime().tm_mon) + "_" + str(time.localtime().tm_mday) + "_" + str(time.localtime().tm_hour) + "_" + str(time.localtime().tm_min)
       self.tcpdump_core(self.number_of_nodes, "./reports/" + simdir + "/tracer")
 
-    
+    #Start socketio thread
     sthread = threading.Thread(target=self.server_thread, args=())
     sthread.start()
 
-    terminals = self.start_terminal(self.session, 1)
-  
-    #self.configure_bridge()
-    #self.configure_serial(self.number_of_nodes)
-    #riot_nodes = self.run_riot(self.session, self.number_of_nodes, self.app_dir, self.app)
+    #Start routing and applications
+    self.scenario.start_routing(self.session)
+    self.scenario.start_applications(self.session)
 
-    while True:
+    while self.running:
       time.sleep(0.1)
+
     # shutdown session
     logging.info("Simulation finished. Killing all processes")
-    if self.core:
-      self.coreemu.shutdown()
-
+    self.coreemu.shutdown()
     os.system("sudo killall xterm")
-    os.system("chown -R " + username + ":" + username + " ./reports")
+    os.system("chown -R " + self.scenario.username + ":" + self.scenario.username + " ./reports")
 
-  def start_terminal(self, session, number_of_nodes):
-    ### TODO: add all application starts to inside node class
-    print("Starting Terminals in CORE")
-    nodes = {}
-    for i in range(0,number_of_nodes):
-      shell = session.get_node(i+1, CoreNode).termcmdstring(sh="/bin/bash")
-      command = ""
-      #shell += " -c '" + command + "'"
-      node = subprocess.Popen([
-                      "xterm",
-                      #"-xrm 'XTerm.vt100.allowTitleOps: false' -title drone" + str(i),
-                      "-e",
-                      shell], stdin=subprocess.PIPE, shell=False)
-      nodes["drone" + str(i)] = node
-    return nodes
-
-  def configure_serial(self, number_of_nodes):
-    pass
-
-  def configure_bridge(self):
-    process = []
-    for i in range(0,self.number_of_nodes):
-      shell = self.session.get_node(i+1, CoreNode).termcmdstring(sh="/bin/bash")
-      command =  "ip tuntap add tap0 mode tap"
-      command += " && ip link add br0 type bridge"
-      command += " && ip link set br0 up"
-      command += " && ip link set tap0 up"
-      command += " && ip link set tap0 master br0"
-      command += " && ip link set bat0 master br0"
-      shell += " -c '" + command + "'"
-      node = subprocess.Popen([
-                    "xterm",
-                    "-e",
-                    shell], stdin=subprocess.PIPE, shell=False)
-      process.append(node)
-
-  def run_riot(self, session, number_of_nodes, app_dir, app):
-    print("Starting RIOT Application: " + app)
-    nodes = {}
-    for i in range(0,number_of_nodes):
-      shell = session.get_node(i+1, CoreNode).termcmdstring(sh="/bin/bash")
-      command = app_dir
-      command += "/" + app
-      shell += " -c '" + command + "'"
-      node = subprocess.Popen([
-                      "xterm",
-                      "-e",
-                      shell], stdin=subprocess.PIPE, shell=False)
-      nodes["drone" + str(i)] = node
-    return nodes

@@ -139,7 +139,7 @@
                     :config="{
                       x: item.x,
                       y: item.y,
-                      radius: wlan.range,
+                      radius: item.range,
                       fill: '#000088',
                       draggable: false,
                       opacity: 0.05,
@@ -422,7 +422,8 @@ export default {
           draggable: true,
           radius: 6,
           shadowColor: 'black',
-          type: 'mote'
+          type: 'mote',
+          range: data.nodes[n].range
         })
       }
       this.update_graph()

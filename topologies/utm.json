@@ -1,0 +1,142 @@
+[
+  {
+    "_id": 0,
+    "x": 149.66668701171875,
+    "y": 151,
+    "fill": "#1100FF",
+    "stroke": "black",
+    "strokeWidth": 0,
+    "shadowBlur": 1,
+    "shadowOffset": {
+      "x": 2,
+      "y": 2
+    },
+    "shadowOpacity": 0.2,
+    "opacity": 0.8,
+    "draggable": true,
+    "radius": 6,
+    "shadowColor": "black",
+    "type": "node",
+    "range": 250
+  },
+  {
+    "_id": 1,
+    "x": 350.66668701171875,
+    "y": 250,
+    "fill": "#1100FF",
+    "stroke": "black",
+    "strokeWidth": 0,
+    "shadowBlur": 1,
+    "shadowOffset": {
+      "x": 2,
+      "y": 2
+    },
+    "shadowOpacity": 0.2,
+    "opacity": 0.8,
+    "draggable": true,
+    "radius": 6,
+    "shadowColor": "black",
+    "type": "node",
+    "range": 250
+  },
+  {
+    "_id": 2,
+    "x": 498.66668701171875,
+    "y": 101,
+    "fill": "#1100FF",
+    "stroke": "black",
+    "strokeWidth": 0,
+    "shadowBlur": 1,
+    "shadowOffset": {
+      "x": 2,
+      "y": 2
+    },
+    "shadowOpacity": 0.2,
+    "opacity": 0.8,
+    "draggable": true,
+    "radius": 6,
+    "shadowColor": "black",
+    "type": "node",
+    "range": 250
+  },
+  {
+    "_id": 3,
+    "x": 451.66668701171875,
+    "y": 448,
+    "fill": "#1100FF",
+    "stroke": "black",
+    "strokeWidth": 0,
+    "shadowBlur": 1,
+    "shadowOffset": {
+      "x": 2,
+      "y": 2
+    },
+    "shadowOpacity": 0.2,
+    "opacity": 0.8,
+    "draggable": true,
+    "radius": 6,
+    "shadowColor": "black",
+    "type": "node",
+    "range": 250
+  },
+  {
+    "_id": 4,
+    "x": 649.6666870117188,
+    "y": 450,
+    "fill": "#1100FF",
+    "stroke": "black",
+    "strokeWidth": 0,
+    "shadowBlur": 1,
+    "shadowOffset": {
+      "x": 2,
+      "y": 2
+    },
+    "shadowOpacity": 0.2,
+    "opacity": 0.8,
+    "draggable": true,
+    "radius": 6,
+    "shadowColor": "black",
+    "type": "node",
+    "range": 250
+  },
+  {
+    "_id": 5,
+    "x": 800.6666870117188,
+    "y": 301,
+    "fill": "#1100FF",
+    "stroke": "black",
+    "strokeWidth": 0,
+    "shadowBlur": 1,
+    "shadowOffset": {
+      "x": 2,
+      "y": 2
+    },
+    "shadowOpacity": 0.2,
+    "opacity": 0.8,
+    "draggable": true,
+    "radius": 6,
+    "shadowColor": "black",
+    "type": "node",
+    "range": 250
+  },
+  {
+    "_id": 6,
+    "x": 1001.6666870117188,
+    "y": 300,
+    "fill": "#1100FF",
+    "stroke": "black",
+    "strokeWidth": 0,
+    "shadowBlur": 1,
+    "shadowOffset": {
+      "x": 2,
+      "y": 2
+    },
+    "shadowOpacity": 0.2,
+    "opacity": 0.8,
+    "draggable": true,
+    "radius": 6,
+    "shadowColor": "black",
+    "type": "node",
+    "range": 250
+  }
+]
