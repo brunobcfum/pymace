@@ -80,8 +80,9 @@ class HETRunner(Runner):
     core_nodes = self.scenario.get_core_nodes()
     for network in core_nodes:
       if network == "mobile":
-        self.Mobility.register_core_nodes(core_nodes[network])
-    self.Mobility.start()
+        pass
+        #self.Mobility.register_core_nodes(core_nodes[network])
+    #self.Mobility.start()
     self.session.instantiate()
     self.session.write_nodes()
     #self.coreemu.shutdown()
@@ -126,6 +127,9 @@ class HETRunner(Runner):
 
     #Setup and Start core
     self.setup_core()
+
+    #Setup mobility
+    self.scenario.configure_mobility(self.session)
 
     #start dumps
     if self.scenario.dump:

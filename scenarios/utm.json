@@ -27,7 +27,7 @@
             "prefix" : "12.0.0.0/24",
             "routing": "none",
             "settings": {
-                "range": "90",
+                "range": "150",
                 "bandwidth": "54000000",
                 "delay": "500",
                 "jitter": "2",
@@ -290,14 +290,57 @@
                 "radius": 6,
                 "shadowColor": "black",
                 "type": "node",
-                "range": 90
+                "range": 150
               },
             "function" : ["terminal"],
             "type": "UAS",
             "extra": {
                 "disks": "False",
                 "dump": "False",
-                "mobility": "random_waypoint",
+                "mobility": { "model": "random_waypoint",
+                              "zone_x" : 1000,
+                              "zone_y" : 600,
+                              "zone_z" : 1000,
+                              "velocity_upper" : 3,
+                              "velocity_lower" : 0.1
+                            },
+                "network": "mobile"
+            }
+        },
+        {
+            "name" : "uas2",
+            "settings": {
+                "_id": 8,
+                "x": 950,
+                "y": 300,
+                "fill": "#1100FF",
+                "stroke": "black",
+                "strokeWidth": 0,
+                "shadowBlur": 1,
+                "shadowOffset": {
+                  "x": 2,
+                  "y": 2
+                },
+                "shadowOpacity": 0.2,
+                "opacity": 0.8,
+                "draggable": true,
+                "radius": 6,
+                "shadowColor": "black",
+                "type": "node",
+                "range": 150
+              },
+            "function" : ["terminal"],
+            "type": "UAS",
+            "extra": {
+                "disks": "False",
+                "dump": "False",
+                "mobility": { "model": "random_waypoint",
+                              "zone_x" : 1000,
+                              "zone_y" : 600,
+                              "zone_z" : 1000,
+                              "velocity_upper" : 3,
+                              "velocity_lower" : 0.1
+                            },
                 "network": "mobile"
             }
         }

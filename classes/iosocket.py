@@ -112,23 +112,20 @@ class Socket(flask.Flask):
                 self.Pymace.iosocket_semaphore = False
             time.sleep(0.5)
 
+    ###TODO: Separate nodes from wlan and for now on, different threads with different rate
+
     def nodes_thread(self):
         data = {}
         data['nodes'] = []
         data['wlan'] = {}
         while self.lock:
             data['nodes'].clear()
-            #positions = next(self.rw)
-            it = 0
             for node in self.nodes:
-                #node.setposition(node.getposition()[0] + 1,node.getposition()[1])
-                #node.setposition(positions[it][0],positions[it][1])
                 nodedata = {}
                 nodedata['position'] = node.getposition()
                 nodedata['id'] = node.id
                 nodedata['range'] = 250
                 data['nodes'].append(nodedata)
-                it += 1
             try:
                 data['wlan']['model'] = self.modelname
                 data['wlan']['range'] = self.session.mobility.get_model_config(self.wlan.id, self.modelname)['range']

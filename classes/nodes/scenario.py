@@ -1,5 +1,7 @@
 from classes.nodes.fixed_node import FixedNode
 from classes.nodes.mobile_node import MobileNode
+from classes.mobility import node_mobility
+from classes.runner.bus import Bus
 
 #Core libs
 from core.emulator.data import IpPrefixes, NodeOptions
@@ -28,6 +30,7 @@ class Scenario():
     self.networks = {}
     self.nodes = {}
     self.core_nodes = {}
+    self.core_nodes_by_name= {}
     self.node_options = {}
     self.prefixes = {}
     self.load_networks(scenario_json)
@@ -54,6 +57,7 @@ class Scenario():
       self.nodes[node['name']]['function'] = node['function']
       self.nodes[node['name']]['type'] = node['type']
       self.nodes[node['name']]['extra'] = node['extra']
+      self.nodes[node['name']]['name'] = node['name']
       self.nodes[node['name']]['id'] = counter
       counter += 1
       #[node['settings'], node['function'], node['type'], node['extra']]
@@ -115,15 +119,17 @@ class Scenario():
     for node in self.nodes:
       if self.nodes[node]['extra']['network'] not in self.node_options.keys():
         self.node_options[self.nodes[node]['extra']['network']] = []
-      self.node_options[self.nodes[node]['extra']['network']].append(NodeOptions(name=self.nodes[node]['settings']['type'] + str(self.nodes[node]['settings']['_id'])))
-      self.node_options[self.nodes[node]['extra']['network']][len(self.node_options[self.nodes[node]['extra']['network']]) - 1].set_position(self.nodes[node]['settings']['x'], self.nodes[node]['settings']['y'])
+      self.node_options[self.nodes[node]['extra']['network']].append(NodeOptions(name=self.nodes[node]['name'], x=self.nodes[node]['settings']['x'], y=self.nodes[node]['settings']['y']))
+      #self.node_options[self.nodes[node]['extra']['network']][len(self.node_options[self.nodes[node]['extra']['network']]) - 1].set_position(self.nodes[node]['settings']['x'], self.nodes[node]['settings']['y'])
 
     for network in self.node_options:
       if network not in self.core_nodes.keys():
         self.core_nodes[network] = []
-      
+     
       for node_opt in self.node_options[network]:
-        self.core_nodes[network].append(session.add_node(CoreNode, options=node_opt))
+        core_node = session.add_node(CoreNode, options=node_opt)
+        self.core_nodes_by_name[node_opt.name] = core_node
+        self.core_nodes[network].append(core_node)
 
   def setup_links(self, session):
     ### TODO temporary solution fix later
@@ -205,7 +211,7 @@ class Scenario():
     for network in self.networks:
       #print(self.networks[network])
       if self.networks[network]['routing'].upper() == 'NONE':
-        break
+        continue
       elif self.networks[network]['routing'].upper() == 'BATMAN':
         for node in self.nodes:
           node_network = self.nodes[node]['extra']['network']
@@ -254,14 +260,26 @@ class Scenario():
       command += " --initial-cluster-state new "
       command += "--initial-cluster-token token-01"
       shell += " -c '" + command + "'"
-      print(shell)
       node = subprocess.Popen([
                       "xterm",
                       "-e",
                       shell], stdin=subprocess.PIPE, shell=False)
 
+  def get_core_node(self, node):
+    pass
+
   def get_core_nodes(self):
-    return self.core_nodes
+    return self.core_nodes    
 
   def get_wlans(self):
     return self.wlans
+    
+  def configure_mobility(self, session):
+    for node in self.nodes:
+      if self.nodes[node]['extra']['mobility'] == "none":
+        continue
+      else:
+        dimensions = [self.nodes[node]['extra']['mobility']['zone_x'],self.nodes[node]['extra']['mobility']['zone_y'],self.nodes[node]['extra']['mobility']['zone_z']]
+        velocity = [self.nodes[node]['extra']['mobility']['velocity_lower'],self.nodes[node]['extra']['mobility']['velocity_upper']]
+        mobility = node_mobility.Mobility(self, self.nodes[node]['extra']['mobility']['model'], dimensions, velocity)
+        mobility.register_core_node(self.core_nodes_by_name[node])
