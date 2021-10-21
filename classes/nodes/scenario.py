@@ -1,5 +1,13 @@
-from classes.nodes.fixed_node import FixedNode
-from classes.nodes.mobile_node import MobileNode
+""" 
+Scenario class
+"""
+__author__ = "Bruno Chianca Ferreira"
+__license__ = "MIT"
+__version__ = "0.2"
+__maintainer__ = "Bruno Chianca Ferreira"
+__email__ = "brunobcf@gmail.com"
+
+from classes.nodes.gen_node import GenericNode
 from classes.mobility import node_mobility
 from classes.runner.bus import Bus
 
@@ -10,7 +18,7 @@ from core.nodes.network import WlanNode
 from core.location.mobility import BasicRangeModel
 
 #Other libs
-import sys, subprocess, os
+import sys, subprocess, os, traceback
 
 class Scenario():
   def __init__(self, scenario_json) -> None:
@@ -20,134 +28,61 @@ class Scenario():
     self.disks_folder = scenario_json['settings']['disks_folder']
     self.dump = True if scenario_json['settings']['dump'] == "True" else False
     self._nodes = scenario_json['nodes']
-    self.fixed_core_settings = self.get_fixed_settings(scenario_json)
-    self.mobile_core_settings = self.get_mobile_settings(scenario_json)
     self.wlans = {}
     self.node_options_fixed = []
     self.node_options_mobile = []
     self.fixed_wlan = WlanNode
     self.mobile_wlan = WlanNode
     self.networks = {}
-    self.nodes = {}
     self.core_nodes = {}
     self.core_nodes_by_name= {}
     self.node_options = {}
     self.prefixes = {}
+    self.etcd_cluster = {}
+    self.mace_nodes = []
     self.load_networks(scenario_json)
     self.load_nodes(scenario_json)
-    self.etcd_cluster = {}
-    self._setup_nodes(self._nodes)
 
   def load_networks(self, scenario_json):
     networks = scenario_json['networks']
     for network in networks:
       self.networks[network['name']] = {}
       self.networks[network['name']] = network
-      #self.networks[network['name']]['routing'] = network['routing']
       self.prefixes[network['name']] = IpPrefixes(network['prefix'])
-    #print(self.networks)
-    #sys.exit(1)
 
   def load_nodes(self, scenario_json):
     nodes = scenario_json['nodes']
-    counter = 1
     for node in nodes:
-      self.nodes[node['name']] = {}
-      self.nodes[node['name']]['settings'] = node['settings']
-      self.nodes[node['name']]['function'] = node['function']
-      self.nodes[node['name']]['type'] = node['type']
-      self.nodes[node['name']]['extra'] = node['extra']
-      self.nodes[node['name']]['name'] = node['name']
-      self.nodes[node['name']]['id'] = counter
-      counter += 1
-      #[node['settings'], node['function'], node['type'], node['extra']]
-    #print(self.nodes)
-    #sys.exit(1)
-
-  def get_number_nodes(self):
-    return 0
-
-  def get_fixed_settings(self, scenario):
-    settings = {
-      "range": scenario['fixed_core_settings']['radius'],
-      "bandwidth": scenario['fixed_core_settings']['bandwidth'],
-      "delay": scenario['fixed_core_settings']['delay'],
-      "jitter": scenario['fixed_core_settings']['jitter'],
-      "error": scenario['fixed_core_settings']['error']
-    }
-    return settings
-
-  def get_mobile_settings(self, scenario):
-    settings = {
-      "range": scenario['mobile_core_settings']['radius'],
-      "bandwidth": scenario['mobile_core_settings']['bandwidth'],
-      "delay": scenario['mobile_core_settings']['delay'],
-      "jitter": scenario['mobile_core_settings']['jitter'],
-      "error": scenario['mobile_core_settings']['error']
-    }
-    return settings
-
-  def _setup_nodes(self, nodes):
-    for node in nodes:
-      try:
-        #print(node['settings']['x'])
-        if (node['extra']['mobility'] != "none"):
-          self.node_options_mobile.append(NodeOptions(name=node['settings']['type'] + str(node['settings']['_id'])))
-          self.node_options_mobile[len(self.node_options_mobile) - 1].set_position(node['settings']['x'], node['settings']['y'])
-          self.mobile_nodes.append(MobileNode(
-                 coordinates = [node['settings']['x'], node['settings']['y'], 0],
-                 tagname = node['settings']['type'] + str(node['settings']['_id']),
-                 tag_number = node['settings']['_id'],
-                 node_type = node['type'],
-                 function = node['function']))
-        else:
-          self.node_options_fixed.append(NodeOptions(name=node['settings']['type'] + str(node['settings']['_id'])))
-          self.node_options_fixed[len(self.node_options_fixed) - 1].set_position(node['settings']['x'], node['settings']['y'])
-          self.fixed_nodes.append(FixedNode(
-                 coordinates = [node['settings']['x'], node['settings']['y'], 0],
-                 tagname = node['settings']['type'] + str(node['settings']['_id']),
-                 tag_number = node['settings']['_id'],
-                 node_type = node['type'],
-                 function = node['function']))
-          #print(self.fixed_nodes)
+      try: 
+        self.mace_nodes.append(GenericNode(
+          coordinates = [node['settings']['x'], node['settings']['y'], 0],
+          tagname = node['settings']['type'] + str(node['settings']['_id']),
+          tag_number = node['settings']['_id'],
+          node_type = node['type'],
+          function = node['function'],
+          name = node['name'],
+          nodetype = node['type'],
+          disks = True if (node['extra']['disks'] == "True") else False,
+          dump = True if (node['extra']['dump'] == "True") else False,
+          mobility = node['extra']['mobility'],
+          network = node['extra']['network'],
+          max_position = None if node['extra']['mobility'] == "none" else [node['extra']['mobility']['zone_x'], node['extra']['mobility']['zone_y'], node['extra']['mobility']['zone_z']],
+          velocity = None if node['extra']['mobility'] == "none" else [node['extra']['mobility']['velocity_lower'], node['extra']['mobility']['velocity_upper']]
+        ))
       except:
-        #traceback.print_exc()
-        print("Missing settings key in nodes. Aborting simulation.")
-    #sys.exit(1)
+        traceback.print_exc()
 
   def setup_nodes(self, session):
-    for node in self.nodes:
-      if self.nodes[node]['extra']['network'] not in self.node_options.keys():
-        self.node_options[self.nodes[node]['extra']['network']] = []
-      self.node_options[self.nodes[node]['extra']['network']].append(NodeOptions(name=self.nodes[node]['name'], x=self.nodes[node]['settings']['x'], y=self.nodes[node]['settings']['y']))
-      #self.node_options[self.nodes[node]['extra']['network']][len(self.node_options[self.nodes[node]['extra']['network']]) - 1].set_position(self.nodes[node]['settings']['x'], self.nodes[node]['settings']['y'])
-
-    for network in self.node_options:
-      if network not in self.core_nodes.keys():
-        self.core_nodes[network] = []
-     
-      for node_opt in self.node_options[network]:
-        core_node = session.add_node(CoreNode, options=node_opt)
-        self.core_nodes_by_name[node_opt.name] = core_node
-        self.core_nodes[network].append(core_node)
+    for node in self.mace_nodes:
+      node.options = NodeOptions(name=node.name, x=node.coordinates[0], y=node.coordinates[1])
+      core_node = session.add_node(CoreNode, options=node.options)
+      node.corenode = core_node
 
   def setup_links(self, session):
-    ### TODO temporary solution fix later
-    for network in self.core_nodes:
-      if network == "fixed":
-        for node in self.core_nodes[network]:
-          interface = self.prefixes[network].create_iface(node)
-          interface2 = self.prefixes["mobile"].create_iface(node)
-          try:
-            session.add_link(node.id, self.wlans[network].id, iface1_data=interface)
-            session.add_link(node.id, self.wlans["mobile"].id, iface1_data=interface2)
-          except:
-            print(node.name)
-            print(self.wlans[network].id)
-      else: 
-        for node in self.core_nodes[network]:
-          interface = self.prefixes[network].create_iface(node)
-          session.add_link(node.id, self.wlans[network].id, iface1_data=interface)
+    for node in self.mace_nodes:
+      for net in node.network:
+        interface = self.prefixes[net].create_iface(node.corenode)
+        session.add_link(node.corenode.id, self.wlans[net].id, iface1_data=interface)
 
   def setup_wlans(self, session):
     for network in self.networks:
@@ -157,27 +92,27 @@ class Scenario():
       session.mobility.set_model_config(lan.id, BasicRangeModel.name,self.networks[network]['settings'])
 
   def start_applications(self, session):
-    for node in self.nodes:
-      functions = self.nodes[node]['function']
-      for function in functions:
-        id = int(self.nodes[node]['settings']['_id']) + 1
+    for node in self.mace_nodes:
+      for function in node.function:
         if function == 'terminal':
-          self.start_terminal(session, id, node)
+          self.start_terminal(session, node.corenode.id, node.name)
         elif function == 'disk':
-          disk = self.create_disk(id, node)
+          disk = self.create_disk(node.corenode.id, node.name)
         elif function == 'etcd':
-          self.etcd_cluster[node] = {}
-          prefix = self.networks[self.nodes[node]['extra']['network']]['prefix']
+          self.etcd_cluster[node.name] = {}
+          prefix = self.networks['fixed']['prefix'] #TODO fix
           prefix = prefix.split("/")[0]
           prefix = prefix.split(".")
           prefix[2] = str(int(prefix[2]) + 1)
           ip = prefix.copy()
-          ip[3] = str(id)
+          ip[3] = str(node.corenode.id)
           ip = '.'.join(ip)
-          self.etcd_cluster[node]["ip"] = ip
-          self.etcd_cluster[node]["prefix"] = prefix
-          self.etcd_cluster[node]["disk"] = disk
-          self.etcd_cluster[node]["id"] = id
+          self.etcd_cluster[node.name]["ip"] = ip
+          self.etcd_cluster[node.name]["prefix"] = prefix
+          self.etcd_cluster[node.name]["disk"] = disk
+          self.etcd_cluster[node.name]["id"] = node.corenode.id
+        else:
+          self.custom_application(session, node.corenode.id, function)
           
     if len(self.etcd_cluster) > 0:
       self.start_etcd(session)
@@ -208,16 +143,12 @@ class Scenario():
     return disk
 
   def start_routing(self, session):
-    for network in self.networks:
-      #print(self.networks[network])
-      if self.networks[network]['routing'].upper() == 'NONE':
-        continue
-      elif self.networks[network]['routing'].upper() == 'BATMAN':
-        for node in self.nodes:
-          node_network = self.nodes[node]['extra']['network']
-          if node_network == 'fixed':
-            id = int(self.nodes[node]['settings']['_id']) + 1
-            self.configure_batman(session, self.networks[network]['prefix'], id)
+    for node in self.mace_nodes:
+      for net in node.network:
+        if self.networks[net]['routing'].upper() == 'NONE':
+          continue
+        elif self.networks[net]['routing'].upper() == 'BATMAN':
+          self.configure_batman(session, self.networks[net]['prefix'], node.corenode.id)
 
   def configure_batman(self, session, network_prefix, id):
     #Configure Batman only on fixed network
@@ -241,7 +172,6 @@ class Scenario():
                   shell], stdin=subprocess.PIPE, shell=False)
 
   def start_etcd(self, session):
-    print("starting ETCD")
     cluster_opt = "--initial-cluster "
     cluster = []
     for node in self.etcd_cluster:
@@ -265,21 +195,31 @@ class Scenario():
                       "-e",
                       shell], stdin=subprocess.PIPE, shell=False)
 
-  def get_core_node(self, node):
-    pass
+  def custom_application(self, session, i, application):
+    shell = session.get_node(i, CoreNode).termcmdstring(sh="/bin/bash")
+    shell = shell.split(" ")
+    shell.append("-c")
+    command = application
+    shell.append(command)
+    node = subprocess.Popen(shell, stdin=subprocess.PIPE, shell=False)
 
   def get_core_nodes(self):
     return self.core_nodes    
 
   def get_wlans(self):
     return self.wlans
+
+  def get_networks(self):
+    return self.networks
+
+  def get_mace_nodes(self):
+    return self.mace_nodes
     
   def configure_mobility(self, session):
-    for node in self.nodes:
-      if self.nodes[node]['extra']['mobility'] == "none":
-        continue
+    for node in self.mace_nodes:
+      if node.mobility == "none":
+        pass
       else:
-        dimensions = [self.nodes[node]['extra']['mobility']['zone_x'],self.nodes[node]['extra']['mobility']['zone_y'],self.nodes[node]['extra']['mobility']['zone_z']]
-        velocity = [self.nodes[node]['extra']['mobility']['velocity_lower'],self.nodes[node]['extra']['mobility']['velocity_upper']]
-        mobility = node_mobility.Mobility(self, self.nodes[node]['extra']['mobility']['model'], dimensions, velocity)
-        mobility.register_core_node(self.core_nodes_by_name[node])
+        mobility = node_mobility.Mobility(self, node.mobility['model'], node.max_position, node.velocity)
+        mobility.register_core_node(node.corenode)
+

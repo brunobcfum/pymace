@@ -2,14 +2,12 @@
 from flask import Flask
 from flask_socketio import SocketIO, emit
 
-import flask, json, requests, os, socket, traceback, threading, time, logging
+import flask, json, requests, os, socket, traceback, threading, time, logging, sys
 from multiprocessing import Process
-
-#from mobility.pymobility.models.mobility import random_waypoint
 
 motes_global = []
 class Socket(flask.Flask):
-    def __init__(self, nodes, wlan, session, modelname, digest, semaphore, pymace, callback):
+    def __init__(self, corenodes, wlan, session, modelname, digest, semaphore, pymace, callback, networks):
         app = flask.Flask(__name__)
         self.Pymace = pymace
         self.socketio = SocketIO(app, cors_allowed_origins="*", engineio_logger=False, logger=False)
@@ -23,14 +21,15 @@ class Socket(flask.Flask):
         self.semaphore = semaphore
         self.lock = True
         self.list_nodes = []
-        self.nodes = nodes
+        self.corenodes = corenodes
         self.initial_nodes = {}
         self.wlan = wlan
         self.session = session
         self.modelname = modelname
         self.pymace_callback = callback
-        #self.rw = random_waypoint(len(self.nodes), dimensions=(220, 220), velocity=(0.5, 2.0), wt_max=1.0)
-        for node in self.nodes:
+        self.networks = networks
+
+        for node in self.corenodes:
             self.initial_nodes[node.id] = node.getposition()
         @app.route("/")
         def info():
@@ -61,16 +60,16 @@ class Socket(flask.Flask):
         
         @self.socketio.on('update_pos', namespace='/sim')
         def handle_message(updated_node):
-            for node in self.nodes:
+            for node in self.corenodes:
                 if int(node.id) - 1 == int(updated_node['node']['id']):
-                    #print(node.id)  
+                    #print(node.id)
                     #print(updated_node['node']['id'])
                     node.setposition(int(updated_node['node']['x']),int(updated_node['node']['y']))
             #print('received message: ' + str(node))
 
         @self.socketio.on('reset_pos', namespace='/sim')
         def handle_message():
-            for node in self.nodes:
+            for node in self.corenodes:
                 node.setposition(self.initial_nodes[node.id][0],self.initial_nodes[node.id][1])
 
         @self.socketio.on('pingServer', namespace='/sim')
@@ -87,22 +86,21 @@ class Socket(flask.Flask):
         def test_disconnect():
             print('Client disconnected')
         self.nthread = threading.Thread(target=self.nodes_thread, args=())
-        self.nthread.start()
         self.dthread = threading.Thread(target=self.emmit_digest, args=())
+        self.netthread = threading.Thread(target=self.network_thread, args=())
+        self.nthread.start()
         self.dthread.start()
+        self.netthread.start()
         self.socketio.run(app, debug=False)
         self.shutdown()
-        #self.server = threading.Thread(target=self.socketio.run, args=(app,))
-        #self.server.start()
 
     def shutdown(self):
         #self.socketio.stop(namespace='/sim')
-        #self.server.kill()
-
         self.lock=False
-        #self.server.join(timeout=2)
         self.nthread.join()
         self.dthread.join()
+        self.netthread.join()
+
 
     def emmit_digest(self):
         while self.lock:
@@ -114,13 +112,18 @@ class Socket(flask.Flask):
 
     ###TODO: Separate nodes from wlan and for now on, different threads with different rate
 
+    def network_thread(self):
+        while self.lock:
+            self.socketio.emit('networks', {'data': self.networks}, namespace='/sim')
+            time.sleep(1)
+
     def nodes_thread(self):
         data = {}
         data['nodes'] = []
         data['wlan'] = {}
         while self.lock:
             data['nodes'].clear()
-            for node in self.nodes:
+            for node in self.corenodes:
                 nodedata = {}
                 nodedata['position'] = node.getposition()
                 nodedata['id'] = node.id
@@ -135,10 +138,9 @@ class Socket(flask.Flask):
                 data['wlan']['error'] = self.session.mobility.get_model_config(self.wlan.id, self.modelname)['error']
             except:
                 pass
-            time.sleep(0.04)
+            time.sleep(0.1)
             self.socketio.emit('nodes', {'data': data}, namespace='/sim')
 
     def add_node(self, node):
-        print(node)
-        self.nodes.append(node)
+        self.corenodes.append(node)
 

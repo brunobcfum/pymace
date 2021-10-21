@@ -1,0 +1,213 @@
+{
+    "settings": {
+        "omnet": "False",
+        "core": "True",
+        "dump": "False",
+        "number_of_nodes": 9,
+        "start_delay": 5,
+        "username": "bruno",
+        "disks_folder" : "/mnt/pymace/"
+    },
+    "networks": [
+        {
+            "name" : "fixed",
+            "prefix" : "10.0.0.0/24",
+            "routing": "batman",
+            "settings": {
+                "range": "250",
+                "bandwidth": "433300000",
+                "delay": "100",
+                "jitter": "0",
+                "error": "1",
+                "emane": "False"
+            }
+        },
+        {
+            "name" : "mobile",
+            "prefix" : "12.0.0.0/24",
+            "routing": "none",
+            "settings": {
+                "range": "90",
+                "bandwidth": "54000000",
+                "delay": "500",
+                "jitter": "2",
+                "error": "2",
+                "emane": "False"
+            }
+        }
+    ],
+    "fixed_core_settings": {
+        "radius": "250",
+        "bandwidth": "433300000",
+        "delay": "100",
+        "jitter": "0",
+        "error": "1",
+        "emane": "False"
+    },
+    "mobile_core_settings": {
+        "radius": "90",
+        "bandwidth": "54000000",
+        "delay": "500",
+        "jitter": "2",
+        "error": "2",
+        "emane": "False"
+    },
+    "nodes": [
+        {
+            "name" : "tower1",
+            "settings": {
+                "_id": 0,
+                "x": 800.6666870117188,
+                "y": 301,
+                "fill": "#1100FF",
+                "stroke": "black",
+                "strokeWidth": 0,
+                "shadowBlur": 1,
+                "shadowOffset": {
+                  "x": 2,
+                  "y": 2
+                },
+                "shadowOpacity": 0.2,
+                "opacity": 0.8,
+                "draggable": true,
+                "radius": 6,
+                "shadowColor": "black",
+                "type": "node",
+                "range": 250
+              },
+            "function" : ["disk", "etcd" , "/home/bruno/Documents/bruno-onera-enac-doctorate/software/utm/utm_server.py -t tower1"],
+            "type": "UTM",
+            "extra": {
+                "disks": "False",
+                "dump": "False",
+                "mobility": "none",
+                "network": "fixed"
+            }
+        },
+        {
+            "name" : "tower2",
+            "settings": {
+                "_id": 1,
+                "x": 1001.6666870117188,
+                "y": 300,
+                "fill": "#1100FF",
+                "stroke": "black",
+                "strokeWidth": 0,
+                "shadowBlur": 1,
+                "shadowOffset": {
+                  "x": 2,
+                  "y": 2
+                },
+                "shadowOpacity": 0.2,
+                "opacity": 0.8,
+                "draggable": true,
+                "radius": 6,
+                "shadowColor": "black",
+                "type": "node",
+                "range": 250
+              },
+            "function" : ["disk", "etcd" , "/home/bruno/Documents/bruno-onera-enac-doctorate/software/utm/utm_server.py -t tower2"],
+            "type": "UTM",
+            "extra": {
+                "disks": "False",
+                "dump": "False",
+                "mobility": "none",
+                "network": "fixed"
+            }
+        },
+        {
+          "name" : "tower3",
+          "settings": {
+              "_id": 2,
+              "x": 860,
+              "y": 105,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" , "/home/bruno/Documents/bruno-onera-enac-doctorate/software/utm/utm_server.py -t tower3"],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": "fixed"
+          }
+        },
+        {
+          "name" : "tower4",
+          "settings": {
+              "_id": 3,
+              "x": 960,
+              "y": 500,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" , "/home/bruno/Documents/bruno-onera-enac-doctorate/software/utm/utm_server.py -t tower4"],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": "fixed"
+          }
+        },
+        {
+            "name" : "uas1",
+            "settings": {
+                "_id": 4,
+                "x": 950,
+                "y": 300,
+                "fill": "#1100FF",
+                "stroke": "black",
+                "strokeWidth": 0,
+                "shadowBlur": 1,
+                "shadowOffset": {
+                  "x": 2,
+                  "y": 2
+                },
+                "shadowOpacity": 0.2,
+                "opacity": 0.8,
+                "draggable": true,
+                "radius": 6,
+                "shadowColor": "black",
+                "type": "node",
+                "range": 150
+              },
+            "function" : ["terminal", "/home/bruno/Documents/bruno-onera-enac-doctorate/software/utm/uas_client.py -t uas1"],
+            "type": "UAS",
+            "extra": {
+                "disks": "False",
+                "dump": "False",
+                "mobility": "none",
+                "network": "mobile"
+            }
+        }
+    ]   
+}
+  

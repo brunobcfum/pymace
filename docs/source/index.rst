@@ -19,6 +19,11 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+main
+===================
+.. automodule:: main
+   :members:
+
 pymace
 ===================
 .. automodule:: pymace

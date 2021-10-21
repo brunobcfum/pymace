@@ -1,6 +1,12 @@
 <template>
     <v-container ref='canv'>
       <v-row>
+        <v-col>
+          <v-chip class="elevation-3" label>x={{ current_pos.x | to_int}}</v-chip>
+          <v-chip class="elevation-3" label>y={{ current_pos.y | to_int}}</v-chip>
+        </v-col>
+      </v-row>
+      <v-row>
         <v-col cols="3" class="ml-3 mr-3">
           <v-row
           justify="space-around">
@@ -108,6 +114,7 @@
             justify="space-around"
             ref='scenarioCanvas'>
               <v-stage ref="stage"
+                @mousemove="updateCoordinates"
                 @dragstart="handleDragStart"
                 @dragend="handleDragEnd"
                 :config="configKonva">
@@ -260,6 +267,10 @@ export default {
         id: 1,
         title: 'Manual'
       },
+      current_pos: {
+        x: 0,
+        y: 0
+      },
       gridSize: 50,
       configMapBack: {
         x: 0,
@@ -296,6 +307,10 @@ export default {
     handleDragStart (event) {
       this.x_start = event.target.attrs.x
       this.y_start = event.target.attrs.y
+    },
+    updateCoordinates (evt) {
+      const stage = evt.target.getStage()
+      this.current_pos = stage.getPointerPosition()
     },
     handleDragEnd (event) {
       console.log(event.target.attrs._id)
@@ -455,6 +470,11 @@ export default {
   computed: {
     bandwidth () {
       return Math.ceil(this.wlan.bandwidth / (1024 * 1024))
+    }
+  },
+  filters: {
+    to_int: function (number) {
+      return parseInt(number,10)
     }
   }
 }

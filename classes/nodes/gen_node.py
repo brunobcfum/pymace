@@ -1,19 +1,28 @@
 from dataclasses import dataclass, field
 from typing import List
+from core.emulator.data import NodeOptions
+from core.nodes.base import CoreNode
 
 @dataclass()
 class GenericNode():
   coordinates: List[float]
+  options: NodeOptions = None
+  corenode: CoreNode = None
   lat: float = None
   lon: float = None
   alt: float = None
   tagname: str = None
   tag_number: int = None
   node_type: str = None
-  function: str = None
+  function: List[str] = None
+  name: str = None
+  nodetype: str = None
+  disks: bool = False
+  dump: bool = False
+  mobility: str = None
+  network: List[str] = None
   max_position: List[float] = field(default_factory=lambda: [5000,5000,5000])
-  mobile: bool = False
-
+  velocity: List[float] = None
 
   #PRIVATE
 
@@ -27,7 +36,6 @@ class GenericNode():
 
   def get_position(self):
     return self.position
-
   
   def get_name(self):
     return self.tagname
