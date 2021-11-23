@@ -34,6 +34,15 @@
       </v-list-item-content>
     </v-list-item>
 
+    <v-list-item @click="openMapView">
+      <v-list-item-action>
+          <v-icon>mdi-map</v-icon>
+      </v-list-item-action>
+      <v-list-item-content>
+          <v-list-item-title>Map View Creator</v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+
     <v-list-item @click="openImageManager">
       <v-list-item-action>
           <v-icon>mdi-harddisk</v-icon>
@@ -42,17 +51,17 @@
           <v-list-item-title>Images Manager</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
-    
+
     <v-spacer></v-spacer>
 
-    <v-list-item @click="openAbout">
+<!--     <v-list-item @click="openAbout">
       <v-list-item-action>
           <v-icon>mdi-help-circle</v-icon>
       </v-list-item-action>
       <v-list-item-content>
           <v-list-item-title>About this page</v-list-item-title>
       </v-list-item-content>
-    </v-list-item>
+    </v-list-item> -->
   </v-list>
   <template v-slot:append>
 
@@ -88,6 +97,14 @@ export default {
     openCreator () {
       this.$router.push({
         name: 'creator'
+      }).catch(err => {
+        if (err.name != "NavigationDuplicated") {
+          throw err;
+        }})
+    },
+    openMapView () {
+      this.$router.push({
+        name: 'map'
       }).catch(err => {
         if (err.name != "NavigationDuplicated") {
           throw err;

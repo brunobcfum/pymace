@@ -361,8 +361,7 @@ class Runner():
     process = []
     for i in range(0,self.number_of_nodes):
       shell = self.session.get_node(i+1, CoreNode).termcmdstring(sh="/bin/bash")
-      command = "export PYTHONPATH=/home/bruno/Documents/bruno-onera-enac-doctorate/software/pprzlink/lib/v2.0/python && "
-      command += "cd " + self.localdir + " && "
+      command = "cd " + self.localdir + " && "
       command += "./main.py "
       command += self.tagbase
       #command += str(i)

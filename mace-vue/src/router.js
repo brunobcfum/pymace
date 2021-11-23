@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Creator from './views/creator/Creator.vue'
+import MapView from './views/map/Map.vue'
 import ImageManager from './views/image/ImageManager.vue'
 import Observer from './views/observer/Observer.vue'
 import NotFound from './components/core/NotFound.vue'
@@ -21,6 +22,11 @@ export default new Router({
       path: '/creator',
       name: 'creator',
       component: Creator
+    },
+    {
+      path: '/map',
+      name: 'map',
+      component: MapView
     },
     {
       path: '/image',
