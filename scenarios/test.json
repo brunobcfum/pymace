@@ -1,0 +1,217 @@
+{
+    "settings": {
+        "omnet": "False",
+        "core": "True",
+        "dump": "False",
+        "number_of_nodes": 9,
+        "start_delay": 5,
+        "username": "bruno",
+        "disks_folder" : "/mnt/pymace/"
+    },
+    "networks": [
+        {
+            "name" : "fixed",
+            "prefix" : "10.0.0.0/24",
+            "routing": "batman",
+            "settings": {
+                "range": "100",
+                "bandwidth": "433300000",
+                "delay": "100",
+                "jitter": "0",
+                "error": "1",
+                "emane": "False"
+            }
+        },
+        {
+            "name" : "mobile",
+            "prefix" : "10.1.0.0/24",
+            "routing": "batman",
+            "settings": {
+                "range": "250",
+                "bandwidth": "433300000",
+                "delay": "100",
+                "jitter": "0",
+                "error": "1",
+                "emane": "False"
+            }
+        }
+    ],
+    "nodes": [
+        {
+            "name" : "client",
+            "settings":   {
+                "_id": 0,
+                "x": 149.67,
+                "y": 151,
+                "fill": "#1100FF",
+                "stroke": "black",
+                "strokeWidth": 0,
+                "shadowBlur": 1,
+                "shadowOffset": {
+                  "x": 2,
+                  "y": 2
+                },
+                "shadowOpacity": 0.2,
+                "opacity": 0.8,
+                "draggable": true,
+                "radius": 6,
+                "shadowColor": "black",
+                "type": "node",
+                "range": 250
+            },
+            "function" : ["terminal", "sleep 30 && xterm -hold -e /home/bruno/projetos/libpaxos/build/sample/client /home/bruno/projetos/libpaxos/paxos.conf"],
+            "type": "Tower",
+            "extra": {
+                "disks": "False",
+                "dump": {
+                    "start": "False",
+                    "delay": 30,
+                    "duration": 60
+                },
+                "mobility": "none",
+                "network": ["fixed"]
+            }
+        },
+        {
+            "name" : "acceptor0",
+            "settings":   {
+                "_id": 1,
+                "x": 149.67,
+                "y": 151,
+                "fill": "#1100FF",
+                "stroke": "black",
+                "strokeWidth": 0,
+                "shadowBlur": 1,
+                "shadowOffset": {
+                  "x": 2,
+                  "y": 2
+                },
+                "shadowOpacity": 0.2,
+                "opacity": 0.8,
+                "draggable": true,
+                "radius": 6,
+                "shadowColor": "black",
+                "type": "node",
+                "range": 250
+            },
+            "function" : ["xterm -e /home/bruno/projetos/libpaxos/build/sample/acceptor 0 /home/bruno/projetos/libpaxos/paxos.conf"],
+            "type": "Tower",
+            "extra": {
+                "disks": "False",
+                "dump": {
+                    "start": "False",
+                    "delay": 30,
+                    "duration": 60
+                },
+                "mobility": "none",
+                "network": ["fixed"]
+            }
+        },
+        {
+            "name" : "acceptor1",
+            "settings":   {
+                "_id": 2,
+                "x": 149.67,
+                "y": 151,
+                "fill": "#1100FF",
+                "stroke": "black",
+                "strokeWidth": 0,
+                "shadowBlur": 1,
+                "shadowOffset": {
+                  "x": 2,
+                  "y": 2
+                },
+                "shadowOpacity": 0.2,
+                "opacity": 0.8,
+                "draggable": true,
+                "radius": 6,
+                "shadowColor": "black",
+                "type": "node",
+                "range": 250
+            },
+            "function" : ["xterm -e /home/bruno/projetos/libpaxos/build/sample/acceptor 1 /home/bruno/projetos/libpaxos/paxos.conf"],
+            "type": "Tower",
+            "extra": {
+                "disks": "False",
+                "dump": {
+                    "start": "False",
+                    "delay": 30,
+                    "duration": 60
+                },
+                "mobility": "none",
+                "network": ["fixed"]
+            }
+        },
+        {
+            "name" : "acceptor2",
+            "settings":   {
+                "_id": 3,
+                "x": 149.67,
+                "y": 151,
+                "fill": "#1100FF",
+                "stroke": "black",
+                "strokeWidth": 0,
+                "shadowBlur": 1,
+                "shadowOffset": {
+                  "x": 2,
+                  "y": 2
+                },
+                "shadowOpacity": 0.2,
+                "opacity": 0.8,
+                "draggable": true,
+                "radius": 6,
+                "shadowColor": "black",
+                "type": "node",
+                "range": 250
+            },
+            "function" : ["xterm -e /home/bruno/projetos/libpaxos/build/sample/acceptor 2 /home/bruno/projetos/libpaxos/paxos.conf"],
+            "type": "Tower",
+            "extra": {
+                "disks": "False",
+                "dump": {
+                    "start": "False",
+                    "delay": 30,
+                    "duration": 60
+                },
+                "mobility": "none",
+                "network": ["fixed"]
+            }
+        },
+        {
+            "name" : "tower5",
+            "settings":   {
+                "_id": 4,
+                "x": 149.67,
+                "y": 151,
+                "fill": "#1100FF",
+                "stroke": "black",
+                "strokeWidth": 0,
+                "shadowBlur": 1,
+                "shadowOffset": {
+                  "x": 2,
+                  "y": 2
+                },
+                "shadowOpacity": 0.2,
+                "opacity": 0.8,
+                "draggable": true,
+                "radius": 6,
+                "shadowColor": "black",
+                "type": "node",
+                "range": 250
+            },
+            "function" : ["sleep 30 &&  xterm -e /home/bruno/projetos/libpaxos/build/sample/proposer 0 /home/bruno/projetos/libpaxos/paxos.conf"],
+            "type": "Tower",
+            "extra": {
+                "disks": "False",
+                "dump": {
+                    "start": "False",
+                    "delay": 30,
+                    "duration": 60
+                },
+                "mobility": "none",
+                "network": ["fixed"]
+            }
+        }
+    ]   
+}
+  

@@ -16,6 +16,7 @@ from core.emulator.data import IpPrefixes, NodeOptions
 from core.nodes.base import CoreNode
 from core.nodes.network import WlanNode
 from core.location.mobility import BasicRangeModel
+from classes.virtual_gps import VirtualGPS
 
 #Other libs
 import sys, subprocess, os, traceback
@@ -42,6 +43,7 @@ class Scenario():
     self.mace_nodes = []
     self.load_networks(scenario_json)
     self.load_nodes(scenario_json)
+    self.cwd = os.getcwd()
 
   def load_networks(self, scenario_json):
     networks = scenario_json['networks']
@@ -63,7 +65,9 @@ class Scenario():
           name = node['name'],
           nodetype = node['type'],
           disks = True if (node['extra']['disks'] == "True") else False,
-          dump = True if (node['extra']['dump'] == "True") else False,
+          dump = True if (node['extra']['dump']['start'] == "True") else False,
+          dump_delay = int(node['extra']['dump']['delay']),
+          dump_duration = int(node['extra']['dump']['duration']),
           mobility = node['extra']['mobility'],
           network = node['extra']['network'],
           max_position = None if node['extra']['mobility'] == "none" else [node['extra']['mobility']['zone_x'], node['extra']['mobility']['zone_y'], node['extra']['mobility']['zone_z']],
@@ -77,6 +81,8 @@ class Scenario():
       node.options = NodeOptions(name=node.name, x=node.coordinates[0], y=node.coordinates[1])
       core_node = session.add_node(CoreNode, options=node.options)
       node.corenode = core_node
+      node.gps = VirtualGPS(node.tagname, node.tag_number)
+      node.gps.start()
 
   def setup_links(self, session):
     for node in self.mace_nodes:
@@ -203,6 +209,33 @@ class Scenario():
     shell.append(command)
     node = subprocess.Popen(shell, stdin=subprocess.PIPE, shell=False)
 
+  def tcpdump(self, session, dir):
+    """ 
+    Method for starting a tcpdump session
+
+    Parameters
+    ----------
+    session - CORE session created in runner
+    dir - 
+
+    Returns
+    --------
+
+    """
+    for node in self.mace_nodes:
+      if node.dump:
+        shell = session.get_node(node.corenode.id, CoreNode).termcmdstring(sh="/bin/bash")
+        command = "cd " + self.cwd + " && "
+        #TODO: change eth0 to be configurable
+        command += "sleep " + str(node.dump_delay) + " && timeout " + str(node.dump_duration) + " tcpdump -i eth0 -w "+ dir + node.name + ".pcap"
+        shell += " -c '" + command + "'"
+        node = subprocess.Popen([
+              "xterm",
+              "-hold",
+              "-e",
+              shell]
+              ,stdin=subprocess.PIPE, shell=False)
+
   def get_core_nodes(self):
     return self.core_nodes    
 
@@ -222,4 +255,4 @@ class Scenario():
       else:
         mobility = node_mobility.Mobility(self, node.mobility['model'], node.max_position, node.velocity)
         mobility.register_core_node(node.corenode)
-
+        mobility.register_mace_node(node)

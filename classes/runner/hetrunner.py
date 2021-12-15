@@ -114,10 +114,18 @@ class HETRunner(Runner):
     self.scenario.configure_mobility(self.session)
 
     #start dumps
-    if self.scenario.dump:
+    #if self.scenario.dump:
       #get simdir
-      simdir = str(time.localtime().tm_year) + "_" + str(time.localtime().tm_mon) + "_" + str(time.localtime().tm_mday) + "_" + str(time.localtime().tm_hour) + "_" + str(time.localtime().tm_min)
-      self.tcpdump_core(self.number_of_nodes, "./reports/" + simdir + "/tracer")
+    simdir = str(time.localtime().tm_year) + "_" + str(time.localtime().tm_mon) + "_" + str(time.localtime().tm_mday) + "_" + str(time.localtime().tm_hour) + "_" + str(time.localtime().tm_min)
+    try:
+        os.mkdir("reports/" + simdir)
+        os.mkdir("reports/" + simdir + '/tracer')
+    except FileExistsError:
+        pass
+        #print("Report folder already created.")
+    except:
+        traceback.print_exc()
+    self.scenario.tcpdump(self.session, "./reports/" + simdir + "/tracer/")
 
     #Start socketio thread
     sthread = threading.Thread(target=self.server_thread, args=())

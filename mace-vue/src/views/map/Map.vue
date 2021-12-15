@@ -1,14 +1,48 @@
 <template>
   <v-container fluid>
     <v-row>
-      <Toolbox
-        v-bind:position="position"
-        v-on:node_type="node_type_change"
-        v-on:range_changed="update_range"
-        v-on:save="save"
-        v-on:load="load"
-        v-on:clear="clear"
-      />  
+      <v-card>
+        <v-tabs
+          background-color="grey darken-3"
+          centered
+          grow
+          dark
+        >
+          <v-tabs-slider color="yellow darken-1"></v-tabs-slider>
+          <v-tab>
+            Toolbox
+          </v-tab>
+          <v-tab-item>
+            <v-container fluid>
+              <v-row no-gutters>
+                <v-col cols=12>
+                  <Toolbox
+                  v-bind:position="position"
+                  v-on:node_type="node_type_change"
+                  v-on:range_changed="update_range"
+                  v-on:save="save"
+                  v-on:load="load"
+                  v-on:clear="clear"
+                />
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-tab-item>
+
+          <v-tab>
+            Networks
+          </v-tab>
+          <v-tab-item>
+            <v-container fluid>
+              <v-row no-gutters>
+                <v-col cols=12>
+                  <Networks/>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-tab-item>
+        </v-tabs>
+      </v-card>
     </v-row>
     <v-row >
       <v-col >
@@ -115,6 +149,7 @@ import L from 'leaflet';
 import { LMap, LTileLayer, LMarker, LPopup, LTooltip, LCircle } from "vue2-leaflet";
 import "leaflet/dist/leaflet.css";
 import Toolbox from '@/views/map/Toolbox'
+import Networks from '@/views/map/Networks'
 
 export default {
   name: "Example",
@@ -125,7 +160,8 @@ export default {
     LPopup,
     LTooltip,
     LCircle,
-    Toolbox
+    Toolbox,
+    Networks
   },
   data() {
     return {

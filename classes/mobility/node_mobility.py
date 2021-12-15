@@ -26,6 +26,9 @@ class Mobility():
     self.core_nodes.append(node)
     self.configure_mobility()
 
+  def register_mace_node(self, node):
+    self.mace_nodes.append(node)
+
   def configure_mobility(self):
     if self.mobility_model.upper() == 'RANDOM_WAYPOINT':
       self.mobility_object = random_waypoint(len(self.core_nodes), dimensions=(self.x_dim , self.y_dim ), velocity=(self.velocity_lower, self.velocity_upper), wt_max=1.0)
@@ -63,7 +66,12 @@ class Mobility():
       for node in self.core_nodes:
         node.setposition(positions[it][0],positions[it][1])
         it += 1
+      for node in self.mace_nodes:
+        node.corenode.setposition(positions[it][0],positions[it][1])
+        node.set_position(positions[it][0],positions[it][1])
+        it += 1
       time.sleep(self.update_interval)
+
 
   def paparazzi_mobility_update(self, data):
     for node in self.core_nodes:
