@@ -20,6 +20,8 @@ https://omnetpp.org/doc/omnetpp/InstallGuide.pdf
 
 This work has been tested with OMNet++ 5.6.2
 
+*Since OMNet does not work well with high traffic load in emulated mode, it is being deprecated as an option.* 
+
 ### Linux
 
 Some packages need to be installed on Linux:
