@@ -10,7 +10,7 @@ __version__ = "0.7"
 __maintainer__ = "Bruno Chianca Ferreira"
 __email__ = "brunobcf@gmail.com"
 
-import  sys, traceback, json, os, argparse, logging, shutil, time, subprocess, socket, auxiliar, threading, requests, pickle, struct
+import  sys, traceback, json, os, argparse, logging, shutil, time, subprocess, socket, auxiliar, threading, requests, pickle, struct, signal
 
 from classes.runner.runner import Runner
 from classes.runner.termrunner import TERMRunner
@@ -37,36 +37,44 @@ def main():
       _new(args.name)
     elif args.command.upper() == 'CLEAN':
       _clean()
+    elif args.command.upper() == 'HET':
+      runner = _setup_heterogeneous(args.scenario)
+      _start(runner, 1)
+      _shutdown()
+    #Deprecated functions below
     elif args.command.upper() == 'ETCD':
+      logging.warning("Depracated function. Recommended to create Scenarios and define node by node now, running as HET")
       runner = _setup_etcd()
       _start(runner, 1)
       _shutdown()
     elif args.command.upper() == 'TERM':
+      logging.warning("Depracated function. Recommended to create Scenarios and define node by node now, running as HET")
       runner = _setup_term()
       _start(runner, 1)
       _shutdown()
     elif args.command.upper() == 'VM':
+      logging.warning("Depracated function. Recommended to create Scenarios and define node by node now, running as HET")
       runner = _setup_vm()
       _start(runner, 1)
       _shutdown()
     elif args.command.upper() == 'RASP':
+      logging.warning("Depracated function. Recommended to create Scenarios and define node by node now, running as HET")
       runner = _setup_rasp()
       _start(runner, 1)
       _shutdown()
     elif args.command.upper() == 'ARM':
+      logging.warning("Depracated function. Recommended to create Scenarios and define node by node now, running as HET")
       runner = _setup_arm()
       _start(runner, 1)
       _shutdown()
     elif args.command.upper() == 'RIOT':
+      logging.warning("Depracated function. Recommended to create Scenarios and define node by node now, running as HET")
       runner = _setup_riot()
       _start(runner, 1)
       _shutdown()
     elif args.command.upper() == 'DOCKER':
+      logging.warning("Depracated function. Recommended to create Scenarios and define node by node now, running as HET")
       runner = _setup_docker()
-      _start(runner, 1)
-      _shutdown()
-    elif args.command.upper() == 'HET':
-      runner = _setup_heterogeneous(args.scenario)
       _start(runner, 1)
       _shutdown()
   except KeyboardInterrupt:
@@ -74,6 +82,7 @@ def main():
     os._exit(1)
   except SystemExit:
     logging.info("Quiting")
+    os.kill(os.getpid(), signal.SIGINT)
   except:
     logging.error("General error!")
     traceback.print_exc()
@@ -442,9 +451,12 @@ if __name__ == '__main__':
     localdir = os.path.dirname(os.path.abspath(__file__))
     #############################################################################
     main(); #call scheduler function
+    sys.exit(1)
   except KeyboardInterrupt:
     logging.error("Interrupted by ctrl+c")
+    os.kill(os.getpid(), signal.SIGINT)
   except SystemExit:
     logging.info("Quiting")
+    os.kill(os.getpid(), signal.SIGINT)
   except:
     traceback.print_exc()

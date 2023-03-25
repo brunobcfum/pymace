@@ -5,7 +5,6 @@ from flask_socketio import SocketIO, emit
 import flask, json, requests, os, socket, traceback, threading, time, logging, sys
 from multiprocessing import Process
 
-motes_global = []
 class Socket(flask.Flask):
     def __init__(self, corenodes, wlan, session, modelname, digest, semaphore, pymace, callback, networks):
         app = flask.Flask(__name__)

@@ -1,3 +1,7 @@
 batctl
 xterm
 core
+tshark
+libpcap-dev
+libpcre3-dev
+libprotobuf-dev

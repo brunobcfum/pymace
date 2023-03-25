@@ -4,3 +4,5 @@ apscheduler
 ping3
 geopy
 pymobility
+dpkt
+seaborn

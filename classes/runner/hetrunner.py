@@ -68,7 +68,8 @@ class HETRunner(Runner):
     self.modelname = BasicRangeModel.name
 
     self.scenario.setup_nodes(self.session)
-    self.scenario.setup_wlans(self.session)
+    #self.scenario.setup_wlans(self.session)
+    self.scenario.setup_wlan_emane(self.session)
     self.scenario.setup_links(self.session)
 
     self.session.instantiate()
@@ -102,6 +103,23 @@ class HETRunner(Runner):
       nodes.append(node.corenode)
     self.iosocket = iosocket.Socket(nodes, mobile_lan, self.session, self.modelname, self.nodes_digest, self.iosocket_semaphore, self, self.callback, self.scenario.get_networks())
 
+  def killsim(self):
+    pid = os.popen("ps aux  |grep \"python3 /home/bruno/Documents/bruno-onera-enac-doctorate/software/utm/uas_client.py\" | grep -v \"grep\" | awk '{print $2}'").readlines()
+    for p in pid:
+      os.system("sudo kill -s 9 " + str(p))
+
+    pid = os.popen("ps aux  |grep \"python3 /home/bruno/Documents/bruno-onera-enac-doctorate/software/utm/utm_server.py\" | grep -v \"grep\" | awk '{print $2}'").readlines()
+    for p in pid:
+      os.system("sudo kill -s 9 " + str(p))
+
+    os.system("sudo killall xterm")
+    os.system("sudo core-cleanup")
+    os.system("sudo ip link delete vetha.0.1")
+    os.system("sudo ip link delete vetha.1.1")  
+    pid = os.popen("ps aux  |grep \"pymace.py\" | grep -v \"grep\" | awk '{print $2}'").readlines()
+    for p in pid:
+      os.system("sudo kill -s 9 " + str(p))
+
   def run(self):
     """
     Runs the emulation of a heterogeneous scenario
@@ -114,10 +132,18 @@ class HETRunner(Runner):
     self.scenario.configure_mobility(self.session)
 
     #start dumps
-    if self.scenario.dump:
+    #if self.scenario.dump:
       #get simdir
-      simdir = str(time.localtime().tm_year) + "_" + str(time.localtime().tm_mon) + "_" + str(time.localtime().tm_mday) + "_" + str(time.localtime().tm_hour) + "_" + str(time.localtime().tm_min)
-      self.tcpdump_core(self.number_of_nodes, "./reports/" + simdir + "/tracer")
+    simdir = str(time.localtime().tm_year) + "_" + str(time.localtime().tm_mon) + "_" + str(time.localtime().tm_mday) + "_" + str(time.localtime().tm_hour) + "_" + str(time.localtime().tm_min)
+    try:
+        os.mkdir("reports/" + simdir)
+        os.mkdir("reports/" + simdir + '/tracer')
+    except FileExistsError:
+        pass
+        #print("Report folder already created.")
+    except:
+        traceback.print_exc()
+    self.scenario.tcpdump(self.session, "./reports/" + simdir + "/tracer/")
 
     #Start socketio thread
     sthread = threading.Thread(target=self.server_thread, args=())
@@ -127,8 +153,12 @@ class HETRunner(Runner):
     self.scenario.start_routing(self.session)
     self.scenario.start_applications(self.session)
 
+    time.sleep(570)
+    self.killsim()
+
     while self.running:
       time.sleep(0.1)
+
 
     # shutdown session
     logging.info("Simulation finished. Killing all processes")

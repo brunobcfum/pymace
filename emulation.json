@@ -39,7 +39,7 @@
     "bandwidth": "433300000",
     "delay": "500",
     "jitter": "0",
-    "error": "1",
+    "error": "0",
     "emane": "False"
   },
   "etcd": {
@@ -67,7 +67,7 @@
     "core": "True",
     "disks": "True",
     "dump": "False",
-    "topology": "fullmeshWobn",
+    "topology": "symmetrical",
     "mobility": "none"
   },
   "riot": {

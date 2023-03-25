@@ -1,0 +1,600 @@
+{
+    "settings": {
+        "omnet": "False",
+        "core": "True",
+        "dump": "False",
+        "number_of_nodes": 9,
+        "start_delay": 5,
+        "username": "bruno",
+        "disks_folder" : "/mnt/pymace/"
+    },
+    "networks": [
+        {
+            "name" : "fixed",
+            "prefix" : "10.0.0.0/24",
+            "routing": "batman",
+            "settings": {
+                "range": "120",
+                "bandwidth": "433300000",
+                "delay": "100",
+                "jitter": "0",
+                "error": "0",
+                "emane": "False"
+            }
+        },
+        {
+            "name" : "mobile",
+            "prefix" : "12.0.0.0/24",
+            "routing": "batman",
+            "settings": {
+                "range": "90",
+                "bandwidth": "54000000",
+                "delay": "500",
+                "jitter": "2",
+                "error": "2",
+                "emane": "False"
+            }
+        }
+    ],
+    "nodes": [
+        {
+            "name" : "tower1",
+            "settings": {
+                "_id": 0,
+                "x": 211,
+                "y": 35,
+                "fill": "#1100FF",
+                "stroke": "black",
+                "strokeWidth": 0,
+                "shadowBlur": 1,
+                "shadowOffset": {
+                  "x": 2,
+                  "y": 2
+                },
+                "shadowOpacity": 0.2,
+                "opacity": 0.8,
+                "draggable": true,
+                "radius": 6,
+                "shadowColor": "black",
+                "type": "node",
+                "range": 250
+              },
+            "function" : ["disk", "etcd" ],
+            "type": "UTM",
+            "extra": {
+                "disks": "False",
+                "dump": "False",
+                "mobility": "none",
+                "network": ["fixed"]
+            }
+        },
+        {
+            "name" : "tower2",
+            "settings": {
+                "_id": 1,
+                "x": 303,
+                "y": 35,
+                "fill": "#1100FF",
+                "stroke": "black",
+                "strokeWidth": 0,
+                "shadowBlur": 1,
+                "shadowOffset": {
+                  "x": 2,
+                  "y": 2
+                },
+                "shadowOpacity": 0.2,
+                "opacity": 0.8,
+                "draggable": true,
+                "radius": 6,
+                "shadowColor": "black",
+                "type": "node",
+                "range": 250
+              },
+            "function" : ["disk", "etcd" ],
+            "type": "UTM",
+            "extra": {
+                "disks": "False",
+                "dump": "False",
+                "mobility": "none",
+                "network": ["fixed"]
+            }
+        },
+        {
+          "name" : "tower3",
+          "settings": {
+              "_id": 2,
+              "x": 384,
+              "y": 62,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" ],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": ["fixed"]
+          }
+        },
+        {
+          "name" : "tower4",
+          "settings": {
+              "_id": 3,
+              "x": 458,
+              "y": 125,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" ],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": ["fixed"]
+          }
+        },
+        {
+          "name" : "tower5",
+          "settings": {
+              "_id": 4,
+              "x": 500,
+              "y": 205,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" ],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": ["fixed"]
+          }
+        },
+        {
+          "name" : "tower6",
+          "settings": {
+              "_id": 5,
+              "x": 504,
+              "y": 319,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" ],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": ["fixed"]
+          }
+        },
+        {
+          "name" : "tower7",
+          "settings": {
+              "_id": 6,
+              "x": 495,
+              "y": 425,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" ],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": ["fixed"]
+          }
+        },
+        {
+          "name" : "tower8",
+          "settings": {
+              "_id": 7,
+              "x": 472,
+              "y": 524,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" ],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": ["fixed"]
+          }
+        },
+        {
+          "name" : "tower9",
+          "settings": {
+              "_id": 8,
+              "x": 386,
+              "y": 577,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" ],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": ["fixed"]
+          }
+        },
+        {
+          "name" : "tower10",
+          "settings": {
+              "_id": 9,
+              "x": 289,
+              "y": 584,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" ],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": ["fixed"]
+          }
+        },
+        {
+          "name" : "tower11",
+          "settings": {
+              "_id": 10,
+              "x": 186,
+              "y": 573,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" ],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": ["fixed"]
+          }
+        },
+        {
+          "name" : "tower12",
+          "settings": {
+              "_id": 11,
+              "x": 97,
+              "y": 521,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" ],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": ["fixed"]
+          }
+        },
+        {
+          "name" : "tower13",
+          "settings": {
+              "_id": 12,
+              "x": 44,
+              "y": 441,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" ],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": ["fixed"]
+          }
+        },
+        {
+          "name" : "tower14",
+          "settings": {
+              "_id": 13,
+              "x": 29,
+              "y": 349,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" ],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": ["fixed"]
+          }
+        },
+        {
+          "name" : "tower15",
+          "settings": {
+              "_id": 14,
+              "x": 30,
+              "y": 251,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" ],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": ["fixed"]
+          }
+        },
+        {
+          "name" : "tower16",
+          "settings": {
+              "_id": 15,
+              "x": 27,
+              "y": 167,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" ],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": ["fixed"]
+          }
+        },
+        {
+          "name" : "tower17",
+          "settings": {
+              "_id": 16,
+              "x": 68,
+              "y": 98,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" ],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": ["fixed"]
+          }
+        },
+        {
+          "name" : "tower18",
+          "settings": {
+              "_id": 17,
+              "x": 137,
+              "y": 51,
+              "fill": "#1100FF",
+              "stroke": "black",
+              "strokeWidth": 0,
+              "shadowBlur": 1,
+              "shadowOffset": {
+                "x": 2,
+                "y": 2
+              },
+              "shadowOpacity": 0.2,
+              "opacity": 0.8,
+              "draggable": true,
+              "radius": 6,
+              "shadowColor": "black",
+              "type": "node",
+              "range": 250
+            },
+          "function" : ["disk", "etcd" ],
+          "type": "UTM",
+          "extra": {
+              "disks": "False",
+              "dump": "False",
+              "mobility": "none",
+              "network": ["fixed"]
+          }
+        }
+    ]   
+}
+  
