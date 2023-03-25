@@ -8,7 +8,7 @@ __maintainer__ = "Bruno Chianca Ferreira"
 __email__ = "brunobcf@gmail.com"
 
 from classes.nodes.gen_node import GenericNode
-from classes.mobility import node_mobility
+from classes.mobility.node_mobility import Mobility
 from classes.runner.bus import Bus
 
 #Core libs
@@ -18,8 +18,13 @@ from core.nodes.network import WlanNode
 from core.location.mobility import BasicRangeModel
 from classes.virtual_gps import VirtualGPS
 
+from core.emane.ieee80211abg import EmaneIeee80211abgModel
+from core.emane.rfpipe import EmaneRfPipeModel
+from core.emane.tdma import EmaneTdmaModel
+from core.emane.nodes import EmaneNet
+
 #Other libs
-import sys, subprocess, os, traceback
+import sys, subprocess, os, traceback, pprint
 
 class Scenario():
   def __init__(self, scenario_json) -> None:
@@ -81,8 +86,9 @@ class Scenario():
       node.options = NodeOptions(name=node.name, x=node.coordinates[0], y=node.coordinates[1])
       core_node = session.add_node(CoreNode, options=node.options)
       node.corenode = core_node
-      node.gps = VirtualGPS(node.tagname, node.tag_number)
+      node.gps = VirtualGPS(node.name, node.tag_number)
       node.gps.start()
+      node.set_position([node.coordinates[0],node.coordinates[1]])
 
   def setup_links(self, session):
     for node in self.mace_nodes:
@@ -96,6 +102,28 @@ class Scenario():
       lan = session.add_node(WlanNode,options=options)
       self.wlans[network] = lan
       session.mobility.set_model_config(lan.id, BasicRangeModel.name,self.networks[network]['settings'])
+
+  def setup_wlan_emane(self, session):
+    session.location.setrefgeo(47.57917, -122.13232, 2.0)
+    session.location.refscale = 150.0
+    for network in self.networks:
+      options = NodeOptions(x=200, y=200, emane=EmaneIeee80211abgModel.name)
+      lan = session.add_node(EmaneNet, options=options)
+      modelname = EmaneIeee80211abgModel.name
+      config = session.emane.get_configs()
+      config.update({"eventservicettl": "2"})
+      wifi_options = {
+        "unicastrate": "12",
+        "multicastrate": "12",
+        "mode":"1",
+      }
+      self.wlans[network] = lan
+      session.emane.set_model_config(lan.id, EmaneIeee80211abgModel.name, wifi_options)
+      #session.mobility.set_model_config(lan.id, BasicRangeModel.name,self.networks[network]['settings'])
+      config = session.emane.get_model_config(lan.id, EmaneIeee80211abgModel.name)
+      pp = pprint.PrettyPrinter(indent=4)
+      pp.pprint (config)
+      #sys.exit(1)
 
   def start_applications(self, session):
     for node in self.mace_nodes:
@@ -138,9 +166,9 @@ class Scenario():
   def create_disk(self,  i, node):
     #create virtual disk for each node
     disk = self.disks_folder + node
-    os.system("umount " + disk)
+    os.system("umount " + disk + "  > /dev/null 2>&1 || /bin/true")
     os.system("rm -rf " + disk)
-    os.system("mkdir " + disk)
+    os.system("mkdir -p " + disk)
     command = "mount -t tmpfs -o size=512m tmpfs " + disk + " &"
     node = subprocess.Popen([
                     "bash",
@@ -253,6 +281,7 @@ class Scenario():
       if node.mobility == "none":
         pass
       else:
-        mobility = node_mobility.Mobility(self, node.mobility['model'], node.max_position, node.velocity)
-        mobility.register_core_node(node.corenode)
-        mobility.register_mace_node(node)
+        node.mobility_model = Mobility(self, node.mobility['model'], node.max_position, node.velocity)
+        node.mobility_model.register_core_node(node.corenode)
+        node.mobility_model.register_mace_node(node)
+        node.mobility_model.configure_mobility()

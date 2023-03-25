@@ -1,4 +1,4 @@
-import sys, threading, pickle, socket, os
+import threading, pickle, socket, os, traceback, struct
 
 class VirtualGPS:
   """
@@ -15,12 +15,15 @@ class VirtualGPS:
   def _update_position(self):
     pass
 
-  def interface_callback(self):
+  def interface_callback(self, data):
     data = pickle.loads(data)
+    #print(data)
     try:
       if data[0] == self.tag:
         if data[1].upper() == 'GET_POSITION':
-          return self.get_position()
+          pos = self.get_position()
+          #print(pos)
+          return pos
     except:
       traceback.print_exc()
       pass
@@ -64,6 +67,7 @@ class VirtualGPS:
         length -= len(newbuf)
       #data = conn.recv(65500)
       response = self.interface_callback(data)
+      #print(response)
       payload = pickle.dumps(response)
       length = len(payload)
       conn.sendall(struct.pack('!I', length))
@@ -82,7 +86,7 @@ class VirtualGPS:
     gps.close()
 
   def get_position(self):
-    return self.core_node.getposition()
+    return self.position
 
   def set_position(self, pos):
     self.position = pos

@@ -3,6 +3,7 @@ from typing import List
 from core.emulator.data import NodeOptions
 from core.nodes.base import CoreNode
 from classes.virtual_gps import VirtualGPS
+from classes.mobility.node_mobility import Mobility
 
 @dataclass()
 class GenericNode():
@@ -10,6 +11,7 @@ class GenericNode():
   options: NodeOptions = None
   corenode: CoreNode = None
   gps: VirtualGPS = None
+  mobility_model: Mobility = None
   lat: float = None
   lon: float = None
   alt: float = None

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import pickle, socket, traceback, struct, threading, time
+import pickle, socket, traceback, struct, threading, time, sys
 from apscheduler.schedulers.background import BackgroundScheduler
 from classes.mobility.pymobility.models.mobility import *
 from classes import pprz_interface
@@ -11,6 +11,7 @@ class Mobility():
     self.name = "MOB"
     self.mobility_model = model
     self.core_nodes = []
+    self.mace_nodes = []
     self.scheduler = BackgroundScheduler()
     ### TODO verify connection between the mobility tick and the actual velocity of nodes
     self.update_interval = 0.1
@@ -24,12 +25,13 @@ class Mobility():
 
   def register_core_node(self, node):
     self.core_nodes.append(node)
-    self.configure_mobility()
+    #self.configure_mobility()
 
   def register_mace_node(self, node):
     self.mace_nodes.append(node)
 
   def configure_mobility(self):
+    #print("mobility>configure_mobility> corenodes: " + str(len(self.core_nodes)) + " mace nodes: " + str(len(self.mace_nodes)))
     if self.mobility_model.upper() == 'RANDOM_WAYPOINT':
       self.mobility_object = random_waypoint(len(self.core_nodes), dimensions=(self.x_dim , self.y_dim ), velocity=(self.velocity_lower, self.velocity_upper), wt_max=1.0)
       self.mobility_thread.start()
@@ -61,16 +63,23 @@ class Mobility():
 
   def mobility_update(self):
     while self.lock:
-      positions = next(self.mobility_object)
-      it = 0
-      for node in self.core_nodes:
-        node.setposition(positions[it][0],positions[it][1])
-        it += 1
-      for node in self.mace_nodes:
-        node.corenode.setposition(positions[it][0],positions[it][1])
-        node.set_position(positions[it][0],positions[it][1])
-        it += 1
-      time.sleep(self.update_interval)
+      #print("mobility> corenodes: " + str(len(self.core_nodes)) + " mace nodes: " + str(len(self.mace_nodes)))
+      try: 
+        positions = next(self.mobility_object)
+        it = 0
+        #for node in self.core_nodes:
+        #  node.setposition(positions[it][0],positions[it][1])
+        #  it += 1
+        for node in self.mace_nodes:
+          node.corenode.setposition(positions[it][0],positions[it][1])
+          node.set_position((positions[it][0],positions[it][1]))
+          it += 1
+        time.sleep(self.update_interval)
+      except:
+        traceback.print_exc()
+        #print("error in mobility")
+        pass
+      time.sleep(0.1)
 
 
   def paparazzi_mobility_update(self, data):
